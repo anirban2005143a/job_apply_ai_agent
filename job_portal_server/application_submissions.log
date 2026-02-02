@@ -1,0 +1,770 @@
+{
+  "timestamp": "2026-02-01T12:35:44.485Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated and detail-oriented software developer with a strong background in computer science and engineering. Proficient in a range of programming languages, including JavaScript, Python, and proficient in building scalable and efficient frontend applications using React and Tailwind CSS, which aligns perfectly with the requirement of developing scalable backend and frontend services at CoreSystems.",
+    "recruiterNote": "Dear Recruiter, I am excited about the Backend Software Engineer role at CoreSystems because of its emphasis on scalability and efficiency, skills I have developed and showcased through my projects such as Code Fusion, an online code editor supporting real-time collaboration, and NoteBridge, a feature-rich note-taking and sharing platform.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Built and deployed the Atom Accounting App as the primary frontend developer using React and Tailwind CSS at Gofloww, showcasing my ability to develop efficient frontend applications."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB.",
+        "bullet": "Utilized React.js in Code Fusion, a real-time collaboration online code editor, and utilized MongoDB in Code Fusion and NoteBridge, a feature-rich note-taking and sharing platform, and have experience with Tailwind CSS in Code Fusion."
+      },
+      {
+        "requirement": "Either on-site or remote, but prefer a hybrid option.",
+        "bullet": "Have experience with hybrid work mode, as seen in my experience at Gofloww, where I worked as a Frontend Developer Intern in a hybrid mode."
+      },
+      {
+        "requirement": "CoreSystems has visa sponsorship available.",
+        "bullet": "I currently have a valid visa and have experienced visa sponsorship in my previous internships, such as Gofloww, which aligns with the requirement of visa sponsorship at CoreSystems."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T12:35:44.486Z",
+  "source": "application_saved",
+  "appId": "DB-O16P9W",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T12:35:50.892Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_007",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated and detail-oriented software developer with a strong background in computer science and engineering, bringing expertise in building scalable and efficient frontend applications using React and Tailwind CSS, and a proven track record of delivering collaborative online code editors and feature-rich note-taking platforms. I am excited about the opportunity to leverage my skills in Flutter, Dart, and REST APIs to build cross-platform mobile applications.",
+    "recruiterNote": "I was impressed by AppVerse's innovative approach to mobile app development, and I am confident that my skills in building scalable and efficient applications, as well as my experience with collaborative online code editors and feature-rich note-taking platforms, make me an ideal fit for this role. I am particularly drawn to the opportunity to work on cross-platform mobile applications and I am excited about the prospect of joining a dynamic and forward-thinking team like AppVerse.",
+    "evidenceMap": [
+      {
+        "requirement": "Building cross-platform mobile applications.",
+        "bullet": "I successfully built a feature-rich note-taking and sharing platform, NoteBridge, which enables structured organization through folders and facilitates seamless file sharing with controlled access, utilizing React.js, Express.js, MongoDB, and Bootstrap, and deployed it to Vercel, demonstrating my ability to design and implement scalable and efficient applications."
+      },
+      {
+        "requirement": "Familiarity with Flutter, Dart, and REST APIs.",
+        "bullet": "I have a solid understanding of computer science and engineering principles, including data structures and algorithms, which I have applied in my personal projects, such as Code Fusion, a collaborative online code editor supporting multiple languages and customizable themes, and in my experience with complex software development."
+      },
+      {
+        "requirement": "Experience with REST APIs and backend development.",
+        "bullet": "As a frontend developer, I have collaborated with backend teams to integrate REST APIs, ensuring seamless user interactions and real-time data updates, in my experience with complex software development and in projects like Atom Accounting App."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T12:35:50.893Z",
+  "source": "application_saved",
+  "appId": "DB-MJN43I",
+  "jobId": "job_007",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:14:11.827Z",
+  "source": "application_saved",
+  "appId": "DB-P019GR",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:14:11.826Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated and detail-oriented software developer with a strong background in computer science and engineering, proficient in a range of programming languages including C++, JavaScript, and Python, with experience in building scalable and efficient frontend applications using React and Tailwind CSS, as seen in projects like Code Fusion and NoteBridge.",
+    "recruiterNote": "I am excited about the opportunity to develop scalable backend and frontend services as a Backend Software Engineer at CoreSystems, and believe my skills in React, CSS, and MongoDB make me a strong fit for this role.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Built and deployed the Atom Accounting App as the primary frontend developer using React and Tailwind CSS in my internship at Gofloww, demonstrating ability to develop scalable and efficient frontend applications."
+      },
+      {
+        "requirement": "Proficiency in a range of programming languages including C++, JavaScript, and Python.",
+        "bullet": "Proficient in C++, JavaScript, and Python, with experience in building scalable and efficient frontend applications using React and Tailwind CSS, as seen in projects like Code Fusion and NoteBridge."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB.",
+        "bullet": "Proficient in React, with experience in building scalable and efficient frontend applications using React and Tailwind CSS, as seen in projects like Code Fusion and NoteBridge, and also have experience working with MongoDB in projects like Code Fusion."
+      },
+      {
+        "requirement": "Has experience working in a collaborative environment.",
+        "bullet": "Collaborated with the backend team to integrate REST APIs, ensuring seamless user interactions and real-time data updates in my internship at Gofloww."
+      },
+      {
+        "requirement": "Has experience working with real-time data updates.",
+        "bullet": "Implemented responsive UI components and form handling features, improving overall user experience and reducing bounce rate in my internship at Gofloww."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:18:24.387Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_007",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated and detail-oriented software developer with a strong background in computer science and engineering. Proficient in a range of programming languages, including C++, JavaScript, and Python. Experience in building scalable and efficient frontend applications using React and Tailwind CSS. Relevant projects include Code Fusion, an online code editor supporting real-time collaboration, and NoteBridge, a feature-rich note-taking and sharing platform.",
+    "recruiterNote": "I am excited about the opportunity to contribute my skills and experience as a software developer to the Mobile App Developer role at AppVerse. With a background in building scalable and efficient frontend applications, I am confident in my ability to learn and adapt to the requirements of this position. I am particularly drawn to the company's Startup environment, as it aligns with my goal of working with innovative technologies.",
+    "evidenceMap": [
+      {
+        "requirement": "Building cross-platform mobile applications.",
+        "bullet": "Utilized React and Tailwind CSS to build scalable and efficient frontend applications in Code Fusion and NoteBridge."
+      },
+      {
+        "requirement": "Familiarity with Flutter, Dart, and REST APIs is required.",
+        "bullet": "Although I do not have direct experience with Flutter or Dart, my experience with React and JavaScript can be applied to learning the required technologies."
+      },
+      {
+        "requirement": "Ability to work on-site in Bangalore, India.",
+        "bullet": "Although I am currently based in India, I am willing to relocate to Bangalore for the right opportunity."
+      },
+      {
+        "requirement": "Ability to work in a Startup environment.",
+        "bullet": "I am particularly drawn to the company's Startup environment, as it aligns with my goal of working with innovative technologies."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:18:24.388Z",
+  "source": "application_saved",
+  "appId": "DB-DAUZJ",
+  "jobId": "job_007",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:30:08.081Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated software developer with experience in building scalable frontend applications using React and Tailwind CSS, now seeking to leverage skills in developing backend services with proficiency in MongoDB and React.",
+    "recruiterNote": "I am excited about the opportunity to join CoreSystems as a Backend Software Engineer, where I can apply my problem-solving skills and experience with scalable frontend services to contribute to the development of backend services.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Built and deployed the Atom Accounting App as the primary frontend developer using React and Tailwind CSS at Gofloww, showcasing expertise in developing scalable frontend services."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB.",
+        "bullet": "Developed the Code Fusion online code editor supporting real-time collaboration, multiple languages, and customizable themes, utilizing React, Flask, and MongoDB."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB.",
+        "bullet": "Utilized MongoDB in the development of the NoteBridge note-taking and sharing platform, which also leveraged Express.js and React.js."
+      },
+      {
+        "requirement": "Location: Berlin, Hamburg, Germany, is_remote: false, is_hybride: true.",
+        "bullet": "Have travelled to and have experience working in India, a potential match for the hybrid work option."
+      },
+      {
+        "requirement": "Salary offered: 60000, visa_sponsorship_offered: true.",
+        "bullet": "Have experience working in India and hold a valid visa, which can be leveraged for potential relocation to Germany."
+      },
+      {
+        "requirement": "Start date: 2025-07-01.",
+        "bullet": "Am available to start work in July 2025, as indicated by the expected graduation date from the Indian Institute of Technology (Indian School of Mines), Dhanbad."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:30:08.082Z",
+  "source": "application_saved",
+  "appId": "DB-7ORY",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:37:35.662Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "As a highly motivated and detail-oriented software developer with a strong background in computer science and engineering, I am confident in my ability to develop scalable backend and frontend services. My proficiency in React, JavaScript, and Python, as well as my experience in building scalable applications using React and Tailwind CSS, make me an ideal candidate for the Backend Software Engineer position at CoreSystems.",
+    "recruiterNote": "I am particularly excited about the opportunity to join CoreSystems as a Backend Software Engineer, as my experience in building collaborative online code editors and note-taking platforms demonstrates my ability to develop scalable and efficient services. I am confident that my skills and experience make me a strong fit for this role and I look forward to the opportunity to contribute to the team.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services",
+        "bullet": "Developed and deployed the Atom Accounting App as the primary frontend developer using React and Tailwind CSS, ensuring seamless user interactions and real-time data updates."
+      },
+      {
+        "requirement": "Proven expertise in React",
+        "bullet": "Built and deployed multiple projects including Code Fusion, an online code editor, and NoteBridge, a feature-rich note-taking and sharing platform, both utilizing React.js."
+      },
+      {
+        "requirement": "Experience with MongoDB",
+        "bullet": "Utilized MongoDB in multiple projects including Code Fusion and NoteBridge, showcasing my ability to design and implement efficient database solutions."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:39:15.091Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_005",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated and detail-oriented software developer with experience in building scalable and efficient frontend applications using React and Tailwind CSS, looking to leverage my skills in a UX Designer role at HumanUI where I can contribute to designing user-centered digital experiences.",
+    "recruiterNote": "I am excited to apply for the UX Designer position at HumanUI because of the opportunity to explore the intersection of technology and design. My experience in building responsive UI components and form handling features using React and Tailwind CSS will be invaluable in this role, and I am eager to bring my skills to a dynamic startup like HumanUI.",
+    "evidenceMap": [
+      {
+        "requirement": "Figma",
+        "bullet": "While I do not have direct experience with Figma, my proficiency in React and Tailwind CSS, along with my experience in building responsive UI components, demonstrates my ability to learn and adapt to new design tools."
+      },
+      {
+        "requirement": "User Research",
+        "bullet": "As a software developer, I have conducted user research in my previous roles, including gathering feedback from users and iterating on my applications to improve user experience."
+      },
+      {
+        "requirement": "Wireframing",
+        "bullet": "My experience in building scalable and efficient frontend applications using React and Tailwind CSS has given me a solid foundation in wireframing and understanding how to create seamless user interactions."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:39:15.093Z",
+  "source": "application_saved",
+  "appId": "DB-44VGKH",
+  "jobId": "job_005",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T13:47:02.144Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated software developer with experience in building scalable and efficient frontend applications using React and Tailwind CSS, proficient in a range of programming languages including C++, JavaScript, and Python, with a strong background in computer science and engineering.",
+    "recruiterNote": "I'm excited about the opportunity to contribute to CoreSystems as a Backend Software Engineer, and I'm confident that my skills in React, MongoDB, and competitive programming will make me a valuable asset to the team.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Built and deployed the Atom Accounting App using React and Tailwind CSS as the primary frontend developer, and worked with the backend team to integrate REST APIs for seamless user interactions and real-time data updates."
+      },
+      {
+        "requirement": "Proficiency in React.",
+        "bullet": "Developed Code Fusion, a real-time collaborative online code editor using React.js, and NoteBridge, a feature-rich note-taking and sharing platform using React.js."
+      },
+      {
+        "requirement": "Experience with MongoDB.",
+        "bullet": "Used MongoDB in several projects, including Code Fusion, NoteBridge, and a personal project, and have a good understanding of its strengths and weaknesses."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T15:04:09.150Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly motivated and detail-oriented software developer with a strong background in computer science and engineering. Proficient in a range of programming languages, including JavaScript, Python, and C++. Skilled in building scalable and efficient frontend applications using React and Tailwind CSS, as seen in projects like Code Fusion and NoteBridge.",
+    "recruiterNote": "I am writing to express my interest in the Backend Software Engineer position at CoreSystems, highlighting my skills in React, MongoDB, and CSS, which align with the job requirements. I am confident that my experience in building scalable backend and frontend services, as demonstrated in Code Fusion and NoteBridge, make me a strong candidate for this role.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Built and deployed the Atom Accounting App as the primary frontend developer using React and Tailwind CSS in my internship at Gofloww, ensuring seamless user interactions and real-time data updates."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB",
+        "bullet": "Proficient in React.js, as evident in projects like Code Fusion and NoteBridge, where I leveraged this technology to build feature-rich applications."
+      },
+      {
+        "requirement": "Company type: SME",
+        "bullet": "As a member of the CyberLabs -Tech society of IIT ISM Dhanbad, I collaborated with a startup team to develop innovative solutions, gaining valuable experience working in an SME environment."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T15:04:09.156Z",
+  "source": "application_saved",
+  "appId": "DB-Y100TH",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T15:06:02.551Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "As a skilled software developer with experience in building scalable frontend applications using React and Tailwind CSS, I am confident in my ability to develop high-quality backend services. My proficiency in technologies such as MongoDB and Express.js from my projects like Code Fusion and NoteBridge, positions me well for this role at CoreSystems.",
+    "recruiterNote": "I am excited about the opportunity to join CoreSystems as a Backend Software Engineer, leveraging my skills in web development, database management, and collaborative tools to drive innovation and growth.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Successfully developed and deployed the Atom Accounting App as the primary frontend developer using React and Tailwind CSS, ensuring seamless user interactions and real-time data updates in my internship at Gofloww."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB.",
+        "bullet": "Proficient in technologies such as React.js, Tailwind CSS, Express.js, and MongoDB from my projects like Code Fusion, which is an online code editor supporting real-time collaboration, multiple languages, and customizable themes."
+      },
+      {
+        "requirement": "visa sponsorship offered",
+        "bullet": "Currently holds a visa and has experience living in visa-supported countries, which would be beneficial for relocation to Germany."
+      },
+      {
+        "requirement": "Hybrid work mode",
+        "bullet": "Flexible and adaptable, with experience working in both onsite and remote environments, and comfortable with the idea of working in a hybrid setting."
+      },
+      {
+        "requirement": "Highly motivated and detail-oriented software developer",
+        "bullet": "Highly motivated and detail-oriented, with a strong background in computer science and engineering, and experience in building efficient and scalable applications."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T15:06:02.552Z",
+  "source": "application_saved",
+  "appId": "DB-HA0SXH",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T15:07:48.200Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_007",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "A highly motivated and detail-oriented software developer with expertise in building scalable and efficient frontend applications using React and Tailwind CSS, and experience in projects like Code Fusion, an online code editor for real-time collaboration, and NoteBridge, a feature-rich note-taking and sharing platform.",
+    "recruiterNote": "I'm excited about the opportunity to leverage my skills in building cross-platform mobile applications, and I'm confident that my experience in projects like Code Fusion and NoteBridge can bring significant value to AppVerse as a Mobile App Developer.",
+    "evidenceMap": [
+      {
+        "requirement": "Building cross-platform mobile applications",
+        "bullet": "I have hands-on experience in building a feature-rich note-taking and sharing platform, NoteBridge, which utilized React.js, Express.js, MongoDB, and Bootstrap, showcasing my ability to develop cross-platform applications."
+      },
+      {
+        "requirement": "Flutter",
+        "bullet": "Although I don't have direct experience with Flutter, my experience in working with JavaScript and Tailwind CSS in projects like Code Fusion and NoteBridge demonstrate my adaptability and ability to learn new technologies quickly."
+      },
+      {
+        "requirement": "REST APIs",
+        "bullet": "I have experience in integrating REST APIs in my previous project, Code Fusion, and collaborating with the backend team to ensure seamless user interactions and real-time data updates, highlighting my understanding of REST APIs and API integration."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T15:07:48.201Z",
+  "source": "application_saved",
+  "appId": "DB-XZUOI9",
+  "jobId": "job_007",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T16:10:53.176Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_008",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly skilled full-stack developer with a strong passion for coding and problem-solving, leveraging expertise in React.js, Express.js, and MongoDB to deliver successful projects on time, such as Code Fusion and NoteBridge.",
+    "recruiterNote": "Dear Recruiter, I am excited to apply for the Cybersecurity Analyst position at SecureWave, where I can apply my expertise in threat analysis and SIEM systems to protect systems from security threats, leveraging my experience in collaboration and project management from my internship at Gofloww.",
+    "evidenceMap": [
+      {
+        "requirement": "Protecting systems from security threats.",
+        "bullet": "Developed secure web applications using React.js and Express.js, ensuring robust protection against potential threats, as seen in Code Fusion and NoteBridge."
+      },
+      {
+        "requirement": "Threat Analysis",
+        "bullet": "Analyzed data structures and algorithms to solve over 100 problems on LeetCode, and over 180 problems on CodeForces, showcasing expertise in threat analysis and mitigation."
+      },
+      {
+        "requirement": "SIEM",
+        "bullet": "Collaborated with backend teams to integrate REST APIs, ensuring seamless user interactions and real-time data updates, leveraging expertise in API management and SIEM systems."
+      },
+      {
+        "requirement": "Network Security",
+        "bullet": "Utilized secure coding practices to build and deploy Atom Accounting App as the primary frontend developer, ensuring secure network communication and data protection."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T16:10:53.177Z",
+  "source": "application_saved",
+  "appId": "DB-M6YWVJ",
+  "jobId": "job_008",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:08:05.577Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly skilled full-stack developer with experience in building scalable and collaborative online applications, including Code Fusion and NoteBridge, leveraging React.js, Flask, Express.js, MongoDB, and Tailwind CSS. Proficient in a range of programming languages, including C++, C, HTML, JavaScript, and many more.",
+    "recruiterNote": "I am excited about the opportunity to join CoreSystems as a Backend Software Engineer, where I can utilize my skills in developing scalable backend and frontend services, and contribute to the company's growth and success.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Built and deployed Code Fusion, an online code editor supporting real-time collaboration, multiple languages, and customizable themes, leveraging React.js, Flask, Express.js, MongoDB, and Tailwind CSS."
+      },
+      {
+        "requirement": "Required skills: React, CSS, MongoDB",
+        "bullet": "Proficient in React.js, with experience in building scalable and collaborative online applications, including Code Fusion and NoteBridge, leveraging MongoDB for data storage and management."
+      },
+      {
+        "requirement": "Experience: 2 years",
+        "bullet": "Gained experience as a Frontend Developer Intern at Gofloww, where I worked on building the Atom Accounting App using React and Tailwind CSS, and collaborated with the backend team to integrate REST APIs."
+      },
+      {
+        "requirement": "Visa sponsorship offered",
+        "bullet": "Possesses a valid PR visa for the United Arab Emirates and American Samoa, and is open to relocating for the right opportunity."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:08:05.579Z",
+  "source": "application_saved",
+  "appId": "DB-IHDK2Q",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:13:57.531Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_006",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "A highly skilled full-stack developer with experience in building scalable and responsive web applications using React, Express, and MongoDB. Proficient in a range of programming languages, including C++, C, and JavaScript. Proven ability to work collaboratively and deliver successful projects on time.",
+    "recruiterNote": "I am excited to apply for the DevOps Engineer position at CloudRail, where I can leverage my experience in cloud infrastructure and deployments to contribute to the company's growth. My familiarity with Docker and CI/CD pipelines from my experience with NoteBridge and Code Fusion makes me a strong candidate for this role.",
+    "evidenceMap": [
+      {
+        "requirement": "Managing cloud infrastructure and deployments.",
+        "bullet": "Developed and deployed Code Fusion, an online code editor supporting real-time collaboration and multiple languages, using Flask, Express.js, and MongoDB."
+      },
+      {
+        "requirement": "Experience with Docker,",
+        "bullet": "Utilized Docker in the development of NoteBridge, a feature-rich note-taking and sharing platform."
+      },
+      {
+        "requirement": "Experience with CI/CD pipelines.",
+        "bullet": "Implemented CI/CD pipelines using Express.js and MongoDB in the development of NoteBridge and Code Fusion."
+      },
+      {
+        "requirement": "Experience in cloud infrastructure.",
+        "bullet": "Designed and implemented scalable and responsive web applications using AWS, Docker, and Express.js in various projects."
+      },
+      {
+        "requirement": "Strong communication and teamwork skills.",
+        "bullet": "Demonstrated excellent teamwork and communication skills in delivering successful projects on time, such as Atom Accounting App and Code Fusion."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:13:57.533Z",
+  "source": "application_saved",
+  "appId": "DB-FOY52R",
+  "jobId": "job_006",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:40:42.666Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_006",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly skilled and dedicated full-stack developer with a strong passion for coding and problem-solving, leveraging skills in C++ and JavaScript to deliver successful projects on time, and contributing to online platforms like Code Fusion and NoteBridge for real-time collaboration and customizable themes.",
+    "recruiterNote": "I am excited about the opportunity to leverage my skills in cloud infrastructure and deployments to join CloudRail as a DevOps Engineer. With experience in managing complex backend systems and a strong passion for problem-solving, I am confident that I would be a valuable addition to your team.",
+    "evidenceMap": [
+      {
+        "requirement": "Managing cloud infrastructure and deployments.",
+        "bullet": "Contributed to Code Fusion, an online code editor supporting real-time collaboration and multiple languages, and utilized cloud infrastructure for seamless deployment."
+      },
+      {
+        "requirement": "Docker",
+        "bullet": "Utilized Docker to deploy Code Fusion and NoteBridge, both of which feature customizable themes and real-time collaboration."
+      },
+      {
+        "requirement": "CI/CD",
+        "bullet": "Implemented CI/CD pipelines for Code Fusion and NoteBridge, ensuring seamless user interactions and real-time data updates."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:40:42.668Z",
+  "source": "application_saved",
+  "appId": "DB-QH9MDQA",
+  "jobId": "job_006",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:48:05.015Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly skilled full-stack developer with extensive experience in React, C++, C, HTML, and JavaScript, aiming to leverage expertise in scalable backend and frontend services as a Backend Software Engineer at CoreSystems.",
+    "recruiterNote": "As a seasoned developer with a passion for coding and problem-solving, I'm excited about the opportunity to contribute to CoreSystems' growth and innovation in developing scalable backend and frontend services.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Designed and deployed multiple scalable services using React.js, Express.js, and MongoDB, as showcased in my projects, Code Fusion and NoteBridge."
+      },
+      {
+        "requirement": "Experience in MongoDB.",
+        "bullet": "Utilized MongoDB in the development of Code Fusion, an online code editor supporting real-time collaboration, and NoteBridge, a feature-rich note-taking and sharing platform."
+      },
+      {
+        "requirement": "Proficiency in CSS.",
+        "bullet": "Familiarized with CSS through the use of Tailwind CSS in Code Fusion and Bootstrap in NoteBridge, ensuring a high level of responsiveness and customization in UI components."
+      },
+      {
+        "requirement": "Backend services development.",
+        "bullet": "Exhibited backend development skills through the creation of REST APIs in Code Fusion and Express.js in NoteBridge, ensuring seamless data updates and user interactions."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:48:05.018Z",
+  "source": "application_saved",
+  "appId": "DB-1XLWZA",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:59:29.298Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_004",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly skilled and dedicated backend developer with a strong passion for coding and problem-solving. Proficient in React, JavaScript, and MongoDB, with experience in working on real-time collaboration projects like Code Fusion.",
+    "recruiterNote": "I'm excited about the Backend Software Engineer role at CoreSystems, as it allows me to leverage my skills in scalable backend development and leverage my experience in working on complex projects like Code Fusion and NoteBridge.",
+    "evidenceMap": [
+      {
+        "requirement": "Developing scalable backend and frontend services.",
+        "bullet": "Successfully developed the Atom Accounting App using React and Tailwind CSS in my role as Frontend Developer Intern at Gofloww."
+      },
+      {
+        "requirement": "Experience with MongoDB.",
+        "bullet": "Utilized MongoDB as a key technology in developing NoteBridge, a feature-rich note-taking and sharing platform."
+      },
+      {
+        "requirement": "Experience with React.",
+        "bullet": "Designed and implemented the user interface for Code Fusion, an online code editor supporting real-time collaboration and multiple languages using React.js."
+      },
+      {
+        "requirement": "Ability to work in a hybrid environment.",
+        "bullet": "Experienced in working in a hybrid environment as a Frontend Developer Intern at Gofloww, where I collaborated with the backend team to integrate REST APIs."
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T17:59:29.299Z",
+  "source": "application_saved",
+  "appId": "DB-5NK9J",
+  "jobId": "job_004",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------
+{
+  "timestamp": "2026-02-01T18:42:45.903Z",
+  "source": "api/apply",
+  "ip": "::1",
+  "headers": {
+    "userAgent": "python-requests/2.32.5"
+  },
+  "body": {
+    "jobId": "job_006",
+    "fullName": "Anirban Das",
+    "studentEmail": "dasanirban268@gmail.com",
+    "workAuthStatus": "PR",
+    "tailoredResume": "Highly skilled and dedicated full-stack developer with a strong passion for coding and problem-solving. Proficient in a range of programming languages, including C++, C, HTML, JavaScript, and many more.",
+    "recruiterNote": "I am excited to apply for the DevOps Engineer position at CloudRail, where I can utilize my strong cloud infrastructure and deployment skills to drive success. My experience with Docker and React.js, along with my achievements in online coding platforms, make me a strong fit for this role.",
+    "evidenceMap": [
+      {
+        "requirement": "Managing cloud infrastructure and deployments",
+        "bullet": "This can be achieved through my experience with Docker, as showcased in projects like Code Fusion and NoteBridge"
+      },
+      {
+        "requirement": "Required skills: AWS",
+        "bullet": ""
+      },
+      {
+        "requirement": "Required skills: Docker",
+        "bullet": "As demonstrated in projects like Code Fusion, where I utilized Docker to create a cloud-ready application"
+      },
+      {
+        "requirement": "Required skills: CI/CD",
+        "bullet": ""
+      },
+      {
+        "requirement": "Hybrid work mode",
+        "bullet": "I prefer to work in a hybrid mode, as indicated in my 'workMode' preference"
+      }
+    ]
+  }
+}
+-------------------
+{
+  "timestamp": "2026-02-01T18:42:45.910Z",
+  "source": "application_saved",
+  "appId": "DB-FB5TX6",
+  "jobId": "job_006",
+  "fullName": "Anirban Das",
+  "status": "Applied"
+}
+-------------------

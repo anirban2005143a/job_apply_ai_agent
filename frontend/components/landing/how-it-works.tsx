@@ -9,7 +9,7 @@ const steps = [
     step: "02",
     title: "Set Your Preferences",
     description:
-      "Define your constraints: location, remote preferences, visa status, start date. Set your apply policy with daily limits and match thresholds.",
+      "Define your preferences: location, remote preferences, visa status, start date. Set your apply policy with daily limits and match thresholds.",
   },
   {
     step: "03",

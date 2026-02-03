@@ -9,7 +9,6 @@ type ResumeItem = { id: string; name: string; size: number };
 type OnboardingState = {
   resumes: ResumeItem[];
   userData: any;
-  constraints?: any;
   userPreference?: any;
 };
 
@@ -18,7 +17,6 @@ type ContextValue = OnboardingState & {
   removeResume: (id: string) => void;
   setUserData: (data: any) => void;
   setResumes: (r: ResumeItem[]) => void;
-  setConstraints: (c: any) => void;
   setUserPreference: (c: any) => void;
   // Ensure resumes are processed (calls dummy API when there are new files)
   ensureResumesProcessed: () => Promise<{ processed: boolean; userData?: any }>;
@@ -27,7 +25,6 @@ type ContextValue = OnboardingState & {
 const defaultState: OnboardingState = {
   resumes: [],
   userData: null,
-  constraints: undefined,
   userPreference: undefined,
 };
 
@@ -43,19 +40,18 @@ export function OnboardingProvider({
   );
   const [userData, setUserDataState] = useState<any>(defaultState.userData);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [constraints, setConstraintsState] = useState<any>(undefined);
   const [userPreference, setUserPreferenceState] = useState<any>(undefined);
 
-  // Keep actual File objects in a ref (not serialized to localStorage)
+  // Keep actual File objects in a ref (not serialized to sessionStorage)
   const resumeFilesRef = React.useRef<Record<string, File | null>>({});
 
-  // load from localStorage
+  // load from sessionStorage
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("onboardingState");
+      const raw = sessionStorage.getItem("onboardingState");
       if (raw) {
         const parsed = JSON.parse(raw);
-        setResumesState([]);
+        // setResumesState([]);
         // sanitize loaded userData to remove auto-empty items
         if (parsed.userData) {
           try {
@@ -70,7 +66,6 @@ export function OnboardingProvider({
         } else {
           setUserDataState(parsed.userData || null);
         }
-        setConstraintsState(parsed.constraints || undefined);
         // Load legacy constraints into userPreference if present, otherwise prefer explicit userPreference
         setUserPreferenceState(parsed.userPreference || parsed.constraints || undefined);
       }
@@ -80,9 +75,9 @@ export function OnboardingProvider({
   }, []);
 
   useEffect(() => {
-    const payload = { resumes, userData, constraints, userPreference };
-    localStorage.setItem("onboardingState", JSON.stringify(payload));
-  }, [resumes, userData, constraints, userPreference]);
+    const payload = { resumes, userData, userPreference };
+    sessionStorage.setItem("onboardingState", JSON.stringify(payload));
+  }, [resumes, userData, userPreference]);
 
   // Notify other parts of the UI immediately when resumes change (so header can enable Details)
   useEffect(() => {
@@ -217,13 +212,11 @@ export function OnboardingProvider({
       value={{
         resumes,
         userData,
-        constraints,
         userPreference,
         addResumes,
         removeResume,
         setUserData: setUserDataState,
         setResumes: setResumesState,
-        setConstraints: setConstraintsState,
         setUserPreference: setUserPreferenceState,
         ensureResumesProcessed,
       }}

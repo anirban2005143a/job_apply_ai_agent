@@ -6,7 +6,7 @@ const safetyFeatures = [
   "Maximum applications per day limit",
   "Minimum match threshold to apply",
   "Blocked companies and role types",
-  "Required constraints (location, remote, visa, start date)",
+  "Required preferences (location, remote, visa, start date)",
   "Instant kill switch to stop all applications",
   "Complete audit trail with submission receipts",
 ];

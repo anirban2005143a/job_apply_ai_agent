@@ -164,9 +164,9 @@ function DetailsContent() {
             } = require("../../../lib/updatePriorities");
             const cleaned = removeEmptyItemsRecursively(userData);
             console.log("[DetailsPage] Final user data on Save:", cleaned);
-            toast.success("Profile saved. Proceeding to constraints...");
+            toast.success("Profile saved. Proceeding to preferences...");
             setTimeout(() => {
-              router.push("/onboarding/constraints");
+              router.push("/onboarding/preferences");
             }, 800);
           }}
           className="

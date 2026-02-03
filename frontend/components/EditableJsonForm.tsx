@@ -269,7 +269,7 @@ export default function EditableJsonForm({
                 return (
                   <div className="space-y-3">
                     {Object.keys(item)
-                      .filter((k) => k !== "id" && k !== "priority")
+                      .filter((k) => k !== "id" && k !== "priority" && !k.startsWith("_"))
                       .map((k) => (
                         <div key={k} className="flex items-center gap-4">
                           <div className="w-32 text-sm text-zinc-600 dark:text-zinc-400">

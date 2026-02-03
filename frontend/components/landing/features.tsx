@@ -12,8 +12,8 @@ const features = [
     icon: Search,
     title: "Job Search & Ranking",
     description:
-      "Our agent searches multiple job sources, deduplicates listings, and ranks them based on skill overlap, experience fit, and your constraints.",
-    highlights: ["Multi-source Search", "Smart Deduplication", "Match Scoring", "Constraint Filtering"],
+      "Our agent searches multiple job sources, deduplicates listings, and ranks them based on skill overlap, experience fit, and your preferences.",
+    highlights: ["Multi-source Search", "Smart Deduplication", "Match Scoring", "Preference Filtering"],
   },
   {
     icon: Send,

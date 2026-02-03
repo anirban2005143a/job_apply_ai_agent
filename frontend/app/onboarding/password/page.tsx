@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 
 export default function PasswordPage() {
   const router = useRouter();
-  const { userData, constraints, userPreference } = useOnboarding();
+  const { userData, userPreference } = useOnboarding();
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
@@ -36,9 +36,9 @@ export default function PasswordPage() {
       // Remove empty items before sending
       const { removeEmptyItemsRecursively } = require("@/lib/updatePriorities");
 
-      // Prefer userPreference saved in localStorage (new flow), fall back to constraints for legacy
-      const stored = JSON.parse(localStorage.getItem('onboardingState') || '{}');
-      const prefs = stored.userPreference || stored.constraints || constraints || {};
+      // Prefer userPreference saved in sessionStorage (new flow)
+      const stored = JSON.parse(sessionStorage.getItem('onboardingState') || '{}');
+      const prefs = stored.userPreference || userPreference || {};
       const merged = { ...prefs, ...userData };
       console.log(merged)
       const cleanedUserData = removeEmptyItemsRecursively(merged);

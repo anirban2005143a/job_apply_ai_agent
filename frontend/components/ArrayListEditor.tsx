@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { apply1BasedPriorityToArray, createItemFromTemplate } from "../lib/updatePriorities";
+import {
+  apply1BasedPriorityToArray,
+  createItemFromTemplate,
+} from "../lib/updatePriorities";
 
 function prettifyLabel(s: string) {
   return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -21,11 +24,15 @@ export default function ArrayListEditor({
   itemRenderer,
   itemClassName,
   emptyMessage,
-  template
+  template,
 }: {
   value: any[];
   onChange: (v: any[]) => void;
-  itemRenderer?: (item: any, idx: number, onItemChange: (i: any) => void) => React.ReactNode;
+  itemRenderer?: (
+    item: any,
+    idx: number,
+    onItemChange: (i: any) => void,
+  ) => React.ReactNode;
   itemClassName?: string;
   emptyMessage?: React.ReactNode;
   // optional template to use when adding an item to an empty list
@@ -58,6 +65,7 @@ export default function ArrayListEditor({
   }
 
   function addItem() {
+    console.log("click")
     let newItem: any;
     if (template) {
       try {
@@ -68,7 +76,8 @@ export default function ArrayListEditor({
     } else if (value.length === 0) {
       newItem = {};
     } else if (typeof value[0] === "string") {
-      newItem = "";
+      // For string arrays we add a visible placeholder so the parent cleaner does not remove it immediately
+      newItem = "New item";
     } else {
       const templateFromExisting = value[0];
       const fromTemplate: any = {};
@@ -78,6 +87,13 @@ export default function ArrayListEditor({
       }
       newItem = fromTemplate;
     }
+
+    // Mark objects as newly added. Parent cleaning will keep this item until the user edits it;
+    // we will strip this internal flag when the user makes an edit.
+    if (newItem && typeof newItem === "object" && !Array.isArray(newItem)) {
+      (newItem as any)._isNew = true;
+    }
+
     const next = apply1BasedPriorityToArray([...value, newItem]);
     onChange(next);
     console.log("[ArrayListEditor] Section after add:", next);
@@ -106,44 +122,43 @@ export default function ArrayListEditor({
 
   return (
     <div className="space-y-4">
-
-  {/* Empty state */}
-  {value.length === 0 ? (
-    <div
-      className="
+      {/* Empty state */}
+      {value.length === 0 ? (
+        <div
+          className="
         rounded-xl border border-dashed
         border-zinc-300 dark:border-zinc-700
         bg-zinc-50 dark:bg-zinc-900
         p-4 text-sm
         text-zinc-600 dark:text-zinc-400
       "
-    >
-      {emptyMessage ?? (
-        <span>
-          No items yet. Click{" "}
-          <strong className="text-zinc-900 dark:text-zinc-100">
-            Add item
-          </strong>{" "}
-          to create one.
-        </span>
-      )}
-    </div>
-  ) : (
-    value.map((item, i) => {
-      const animClass =
-        movedIndex === i
-          ? moveDir === "up"
-            ? "animate-move-up"
-            : "animate-move-down"
-          : "";
+        >
+          {emptyMessage ?? (
+            <span>
+              No items yet. Click{" "}
+              <strong className="text-zinc-900 dark:text-zinc-100">
+                Add item
+              </strong>{" "}
+              to create one.
+            </span>
+          )}
+        </div>
+      ) : (
+        value.map((item, i) => {
+          const animClass =
+            movedIndex === i
+              ? moveDir === "up"
+                ? "animate-move-up"
+                : "animate-move-down"
+              : "";
 
-      return (
-        <div
-          key={i}
-          draggable
-          onDragStart={(e) => onDragStart(e, i)}
-          onDragOver={(e) => onDragOver(e, i)}
-          className={`
+          return (
+            <div
+              key={i}
+              draggable
+              onDragStart={(e) => onDragStart(e, i)}
+              onDragOver={(e) => onDragOver(e, i)}
+              className={`
             group rounded-xl border
             border-zinc-200 dark:border-zinc-800
             bg-white dark:bg-zinc-900
@@ -153,28 +168,27 @@ export default function ArrayListEditor({
             ${animClass}
             ${itemClassName ?? ""}
           `}
-        >
-          <div className="flex items-start gap-4">
-
-            {/* Drag + controls */}
-            <div className="flex flex-col items-center gap-2">
-              <div
-                className="
+            >
+              <div className="flex items-start gap-4">
+                {/* Drag + controls */}
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className="
                   rounded-full border
                   border-zinc-200 dark:border-zinc-700
                   bg-zinc-100 dark:bg-zinc-800
                   p-2 text-zinc-500 dark:text-zinc-400
                   cursor-grab active:cursor-grabbing
                 "
-              >
-                ☰
-              </div>
+                  >
+                    ☰
+                  </div>
 
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => moveUp(i)}
-                  title="Move up"
-                  className="
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => moveUp(i)}
+                      title="Move up"
+                      className="
                     rounded-md border
                     border-zinc-200 dark:border-zinc-700
                     bg-white dark:bg-zinc-900
@@ -182,13 +196,13 @@ export default function ArrayListEditor({
                     text-zinc-600 dark:text-zinc-400
                     hover:bg-zinc-100 dark:hover:bg-zinc-800
                   "
-                >
-                  ▲
-                </button>
-                <button
-                  onClick={() => moveDown(i)}
-                  title="Move down"
-                  className="
+                    >
+                      ▲
+                    </button>
+                    <button
+                      onClick={() => moveDown(i)}
+                      title="Move down"
+                      className="
                     rounded-md border
                     border-zinc-200 dark:border-zinc-700
                     bg-white dark:bg-zinc-900
@@ -196,23 +210,29 @@ export default function ArrayListEditor({
                     text-zinc-600 dark:text-zinc-400
                     hover:bg-zinc-100 dark:hover:bg-zinc-800
                   "
-                >
-                  ▼
-                </button>
-              </div>
-            </div>
+                    >
+                      ▼
+                    </button>
+                  </div>
+                </div>
 
-            {/* Content */}
-            <div className="flex-1 space-y-4">
-              {itemRenderer ? (
-                itemRenderer(item, i, (newItem: any) => {
-                  const copy = [...value];
-                  copy[i] = newItem;
-                  onChange(copy);
-                })
-              ) : typeof item === "string" ? (
-                <input
-                  className="
+                {/* Content */}
+                <div className="flex-1 space-y-4">
+                  {itemRenderer ? (
+                    itemRenderer(item, i, (newItem: any) => {
+                      const copy = [...value];
+                      // Remove internal flags (prefixed with _) before saving
+                      if (newItem && typeof newItem === "object" && !Array.isArray(newItem)) {
+                        for (const k of Object.keys(newItem)) {
+                          if (k.startsWith("_")) delete (newItem as any)[k];
+                        }
+                      }
+                      copy[i] = newItem;
+                      onChange(copy);
+                    })
+                  ) : typeof item === "string" ? (
+                    <input
+                      className="
                     w-full rounded-lg border
                     border-zinc-300 dark:border-zinc-700
                     bg-white dark:bg-zinc-950
@@ -221,24 +241,24 @@ export default function ArrayListEditor({
                     outline-none
                     focus:border-primary focus:ring-1 focus:ring-primary/30
                   "
-                  value={item}
-                  onChange={(e) => {
-                    const copy = [...value];
-                    copy[i] = e.target.value;
-                    onChange(copy);
-                  }}
-                />
-              ) : (
-                <div className="space-y-3">
-                  {Object.keys(item)
-                    .filter((k) => k !== "id" && k !== "priority")
-                    .map((k) => (
-                      <div key={k} className="flex gap-3 items-center">
-                        <div className="w-32 text-sm text-zinc-600 dark:text-zinc-400">
-                          {prettifyLabel(k)}
-                        </div>
-                        <input
-                          className="
+                      value={item}
+                      onChange={(e) => {
+                        const copy = [...value];
+                        copy[i] = e.target.value;
+                        onChange(copy);
+                      }}
+                    />
+                  ) : (
+                    <div className="space-y-3">
+                      {Object.keys(item)
+                        .filter((k) => k !== "id" && k !== "priority" && !k.startsWith("_"))
+                        .map((k) => (
+                          <div key={k} className="flex gap-3 items-center">
+                            <div className="w-32 text-sm text-zinc-600 dark:text-zinc-400">
+                              {prettifyLabel(k)}
+                            </div>
+                            <input
+                              className="
                             w-full rounded-lg border
                             border-zinc-300 dark:border-zinc-700
                             bg-white dark:bg-zinc-950
@@ -247,55 +267,56 @@ export default function ArrayListEditor({
                             outline-none
                             focus:border-primary focus:ring-1 focus:ring-primary/30
                           "
-                          value={item[k] ?? ""}
-                          onChange={(e) => {
-                            const copy = [...value];
-                            copy[i] = { ...copy[i], [k]: e.target.value };
-                            onChange(copy);
-                          }}
-                        />
-                      </div>
-                    ))}
-                </div>
-              )}
+                              value={item[k] ?? ""}
+                              onChange={(e) => {
+                                const copy = [...value];
+                                const updated = { ...copy[i], [k]: e.target.value };
+                                // If this was an internally marked new item, remove the flag on user edit
+                                if ((updated as any)._isNew) delete (updated as any)._isNew;
+                                copy[i] = updated;
+                                onChange(copy);
+                              }}
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  )}
 
-              {/* Actions */}
-              <div className="flex justify-end pt-4 border-t border-zinc-200 dark:border-zinc-800">
-                <button
-                  onClick={() => removeItem(i)}
-                  className="
+                  {/* Actions */}
+                  <div className="flex justify-end pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                    <button
+                      onClick={() => removeItem(i)}
+                      className="
                     text-sm font-medium cursor-pointer
                     text-red-600 dark:text-red-500
                     hover:underline
                   "
-                >
-                  Remove
-                </button>
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      );
-    })
-  )}
+          );
+        })
+      )}
 
-  {/* Add button */}
-  <div className="flex justify-end pt-4">
-    <button
-      onClick={addItem}
-      className="
-        rounded-lg
+      {/* Add button */}
+      <div className="flex justify-end pt-4">
+        <button
+          onClick={addItem}
+          className="
+        rounded-lg cursor-pointer
         bg-primary px-6 py-2
         text-sm font-medium text-white
         hover:bg-primary/90
         transition-colors
       "
-    >
-      Add item
-    </button>
-  </div>
-</div>
-
+        >
+          Add item
+        </button>
+      </div>
+    </div>
   );
 }
-

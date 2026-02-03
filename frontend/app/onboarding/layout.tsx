@@ -30,7 +30,7 @@ export default function OnboardingLayout({
     React.useEffect(() => {
       function read() {
         try {
-          const raw = localStorage.getItem("onboardingState");
+          const raw = sessionStorage.getItem("onboardingState");
           if (!raw) return setHasResumes(false);
           const parsed = JSON.parse(raw);
           setHasResumes(
@@ -42,6 +42,8 @@ export default function OnboardingLayout({
       }
       read();
       function onStorage(e: StorageEvent) {
+        // Note: sessionStorage changes do not fire storage events across tabs.
+        // We still keep this handler as a no-op fallback if localStorage is used elsewhere.
         if (e.key === "onboardingState") read();
       }
       function onResumes() {

@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/components/OnboardingProvider";
 import ResumeUploader from "@/components/ResumeUploader";
 import ResumeCard from "@/components/ResumeCard";
-import { toast } from "react-toastify";
-import { Loader, Loader2 } from "lucide-react";
+import { Loader } from "lucide-react";
+import { showToast } from "@/lib/showToast";
+import { ToastContainer } from "react-toastify";
 
 function UploadPageContent() {
   const router = useRouter();
@@ -24,7 +25,10 @@ function UploadPageContent() {
         router.push("/onboarding/details");
       } else {
         // show generic error
-        toast.error("Resumes could not be processed. Check logs or try again.");
+        showToast(
+          "Resumes could not be processed. Check logs or try again.",
+          1,
+        );
         console.error("Resumes could not be processed");
       }
     } catch (e) {
@@ -142,5 +146,10 @@ function UploadPageContent() {
 }
 
 export default function UploadPage() {
-  return <UploadPageContent />;
+  return (
+    <>
+      <ToastContainer />
+      <UploadPageContent />
+    </>
+  );
 }

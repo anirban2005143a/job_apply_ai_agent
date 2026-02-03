@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useOnboarding } from "@/components/OnboardingProvider";
 import { showToast } from "@/lib/showToast";
 import { ToastContainer } from "react-toastify";
+import { removeEmptyItemsRecursively } from "@/lib/updatePriorities";
 
 export default function PasswordPage() {
   const router = useRouter();
@@ -11,18 +12,6 @@ export default function PasswordPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
-
-  // Prefer merged user data saved in localStorage by the previous step
-//   const [conflicts, setconflicts] = useState<any | null>(null);
-
-//   useEffect(() => {
-//     try {
-//       const stored = JSON.parse(localStorage.getItem('onboardingState') || '{}').constraints;
-//       if (stored) setconflicts(stored);
-//     } catch (err) {
-//       console.warn('Failed to read onboardingState from localStorage', err);
-//     }
-//   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,14 +23,25 @@ export default function PasswordPage() {
     setLoading(true);
     try {
       // Remove empty items before sending
-      const { removeEmptyItemsRecursively } = require("@/lib/updatePriorities");
 
       // Prefer userPreference saved in sessionStorage (new flow)
       const stored = JSON.parse(sessionStorage.getItem('onboardingState') || '{}');
       const prefs = stored.userPreference || userPreference || {};
       const merged = { ...prefs, ...userData };
-      console.log(merged)
-      const cleanedUserData = removeEmptyItemsRecursively(merged);
+      const cleaned = removeEmptyItemsRecursively(merged);
+      function stripInternal(o: any): any {
+        if (Array.isArray(o)) return o.map((v) => stripInternal(v));
+        if (o && typeof o === "object") {
+          const out: any = {};
+          for (const k of Object.keys(o)) {
+            if (k.startsWith("_")) continue;
+            out[k] = stripInternal(o[k]);
+          }
+          return out;
+        }
+        return o;
+      }
+      const cleanedUserData = stripInternal(cleaned);
 
       const backendUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/register`;
       const res = await fetch(backendUrl, {

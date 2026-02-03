@@ -91,6 +91,12 @@ export default function ArrayListEditor({
     // Mark objects as newly added. Parent cleaning will keep this item until the user edits it;
     // we will strip this internal flag when the user makes an edit.
     if (newItem && typeof newItem === "object" && !Array.isArray(newItem)) {
+      // Clone before marking to avoid mutating shared templates (fixes immutability lint)
+      try {
+        newItem = JSON.parse(JSON.stringify(newItem));
+      } catch (e) {
+        newItem = { ...newItem };
+      }
       (newItem as any)._isNew = true;
     }
 
@@ -221,13 +227,16 @@ export default function ArrayListEditor({
                   {itemRenderer ? (
                     itemRenderer(item, i, (newItem: any) => {
                       const copy = [...value];
-                      // Remove internal flags (prefixed with _) before saving
+                      // Remove internal flags (prefixed with _) before saving without mutating caller's object
                       if (newItem && typeof newItem === "object" && !Array.isArray(newItem)) {
-                        for (const k of Object.keys(newItem)) {
-                          if (k.startsWith("_")) delete (newItem as any)[k];
+                        const sanitized: any = { ...newItem };
+                        for (const k of Object.keys(sanitized)) {
+                          if (k.startsWith("_")) delete sanitized[k];
                         }
+                        copy[i] = sanitized;
+                      } else {
+                        copy[i] = newItem;
                       }
-                      copy[i] = newItem;
                       onChange(copy);
                     })
                   ) : typeof item === "string" ? (

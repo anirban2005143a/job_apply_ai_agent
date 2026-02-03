@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { showToast } from "../lib/showToast";
+import { removeEmptyItemsRecursively, applyPrioritiesRecursively } from "@/lib/updatePriorities";
 
 type ResumeItem = { id: string; name: string; size: number };
 
@@ -51,20 +52,17 @@ export function OnboardingProvider({
       const raw = sessionStorage.getItem("onboardingState");
       if (raw) {
         const parsed = JSON.parse(raw);
+        console.log(parsed)
         // setResumesState([]);
         // sanitize loaded userData to remove auto-empty items
         if (parsed.userData) {
           try {
-            // lazy-import helper from lib to avoid circular issues
-            const {
-              removeEmptyItemsRecursively,
-            } = require("../lib/updatePriorities");
             setUserDataState(removeEmptyItemsRecursively(parsed.userData));
           } catch (e) {
-            setUserDataState(parsed.userData || null);
+            setUserDataState(parsed.userData || -1);
           }
         } else {
-          setUserDataState(parsed.userData || null);
+          setUserDataState(parsed.userData || -1);
         }
         // Load legacy constraints into userPreference if present, otherwise prefer explicit userPreference
         setUserPreferenceState(parsed.userPreference || parsed.constraints || undefined);
@@ -75,8 +73,28 @@ export function OnboardingProvider({
   }, []);
 
   useEffect(() => {
-    const payload = { resumes, userData, userPreference };
-    sessionStorage.setItem("onboardingState", JSON.stringify(payload));
+    try {
+      function stripInternal(o: any): any {
+        if (Array.isArray(o)) return o.map((v) => stripInternal(v));
+        if (o && typeof o === "object") {
+          const out: any = {};
+          for (const k of Object.keys(o)) {
+            if (k.startsWith("_")) continue;
+            out[k] = stripInternal(o[k]);
+          }
+          return out;
+        }
+        return o;
+      }
+
+      const payload = {
+        userData: userData ? removeEmptyItemsRecursively(stripInternal(userData)) : userData,
+        userPreference: userPreference ? removeEmptyItemsRecursively(stripInternal(userPreference)) : userPreference,
+      };
+      sessionStorage.setItem("onboardingState", JSON.stringify(payload));
+    } catch (err) {
+      console.warn("Failed to save onboardingState", err);
+    }
   }, [resumes, userData, userPreference]);
 
   // Notify other parts of the UI immediately when resumes change (so header can enable Details)
@@ -133,10 +151,6 @@ export function OnboardingProvider({
       let newUserData: any = undefined;
       if (json && json.user) {
         try {
-          const {
-            removeEmptyItemsRecursively,
-            applyPrioritiesRecursively,
-          } = require("../lib/updatePriorities");
           function stripIds(obj: any): any {
             if (Array.isArray(obj)) return obj.map((v) => stripIds(v));
             if (obj && typeof obj === "object") {

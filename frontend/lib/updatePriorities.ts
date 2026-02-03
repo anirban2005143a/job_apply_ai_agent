@@ -50,8 +50,10 @@ export function removeEmptyItemsRecursively(obj: any): any {
     if (typeof v === "boolean") return false;
     if (Array.isArray(v)) return v.length === 0 || v.every(isEmptyValue);
     if (typeof v === "object") {
-      // consider object empty if all its properties (except internal ones) are empty
-      const keys = Object.keys(v).filter((k) => k !== "id" && k !== "priority");
+      // keep newly added internal-marked objects (e.g., {_isNew:true}) from being considered empty
+      if (v && v._isNew) return false;
+      // consider object empty if all its properties (except id/priority and internal keys starting with _) are empty
+      const keys = Object.keys(v).filter((k) => k !== "id" && k !== "priority" && !k.startsWith("_"));
       if (keys.length === 0) return true;
       return keys.every((k) => isEmptyValue(v[k]));
     }

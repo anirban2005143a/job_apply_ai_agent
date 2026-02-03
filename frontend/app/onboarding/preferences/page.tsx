@@ -18,6 +18,7 @@ import cities from "cities-list";
 import { debounce } from "lodash";
 import ISO6391 from "iso-639-1";
 import { showToast } from "@/lib/showToast";
+import { removeEmptyItemsRecursively } from "@/lib/updatePriorities";
 import { ToastContainer } from "react-toastify";
 
 const languageOptions = ISO6391.getAllNames().map((name) => ({
@@ -719,13 +720,27 @@ export default function PreferencesPage() {
       e.preventDefault();
       setSubmitting(true);
       try {
+        function stripInternal(o: any): any {
+          if (Array.isArray(o)) return o.map((v) => stripInternal(v));
+          if (o && typeof o === "object") {
+            const out: any = {};
+            for (const k of Object.keys(o)) {
+              if (k.startsWith("_")) continue;
+              out[k] = stripInternal(o[k]);
+            }
+            return out;
+          }
+          return o;
+        }
+
+        const cleaned = removeEmptyItemsRecursively(stripInternal(form));
         const current = JSON.parse(
           sessionStorage.getItem("onboardingState") || "{}",
         );
-        current.userPreference = form;
+        current.userPreference = cleaned;
         sessionStorage.setItem("onboardingState", JSON.stringify(current));
 
-        if (typeof setUserPreference === "function") setUserPreference(form);
+        if (typeof setUserPreference === "function") setUserPreference(cleaned);
 
         router.push("/onboarding/password");
       } catch (err) {
@@ -743,7 +758,21 @@ export default function PreferencesPage() {
     try {
       const state = JSON.parse(sessionStorage.getItem("onboardingState") || "{}");
       if (state.userData) setonboardingUser(state.userData);
-      if (state.userPreference) setForm(state.userPreference);
+      if (state.userPreference) {
+        function stripInternal(o: any): any {
+          if (Array.isArray(o)) return o.map((v) => stripInternal(v));
+          if (o && typeof o === "object") {
+            const out: any = {};
+            for (const k of Object.keys(o)) {
+              if (k.startsWith("_")) continue;
+              out[k] = stripInternal(o[k]);
+            }
+            return out;
+          }
+          return o;
+        }
+        setForm(stripInternal(state.userPreference));
+      }
     } catch (e:any) {
       showToast(e?.message || "Error occured. Please refresh the page.")
     } finally {

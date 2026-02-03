@@ -140,8 +140,8 @@ export function OnboardingProvider({
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        showToast("Error processing resumes: " + text, 0);
+        const data = await res.json();
+        showToast("Error processing resumes: " + data.detail, 0);
         return { processed: false };
       }
 

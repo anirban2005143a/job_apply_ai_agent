@@ -169,7 +169,7 @@ function DetailsContent() {
           <button
             onClick={() => router.push("/onboarding/upload")}
             className="
-          rounded-lg
+          rounded-lg cursor-pointer
           border border-zinc-300 dark:border-zinc-700
           bg-white dark:bg-zinc-900
           px-4 py-2 text-sm
@@ -184,7 +184,7 @@ function DetailsContent() {
           <button
             onClick={() => setShowJson((s) => !s)}
             className="
-          rounded-lg
+          rounded-lg cursor-pointer
           border border-zinc-300 dark:border-zinc-700
           bg-white dark:bg-zinc-900
           px-4 py-2 text-sm
@@ -225,14 +225,11 @@ function DetailsContent() {
           }}
           className="
             rounded-lg cursor-pointer
-            bg-primary
+            bg-blue-600 text-white hover:bg-blue-700 transition
             px-6 py-2
             text-sm font-medium
-            text-white
             dark:text-gray-100
             shadow-sm
-            transition-all
-            hover:bg-primary/90
             focus:outline-none
             focus:ring-2 focus:ring-primary/40
           "

@@ -17,18 +17,41 @@ SYSTEM_PROMPT = """You are an expert HR recruitment agent and a strict Data Extr
 Your task is to convert resume markdown into a perfectly structured JSON format.
 
 ### CRITICAL EXTRACTION RULES:
+
 1. **Phone Number:** Search the entire document for a phone number. Extract it as a STRING (e.g., "6290375587"). Do NOT return null if a number is present.
 2. **Summary Generation:** Extract the existing summary or write a professional 2-3 sentence bio based on the candidate's history. Never return null.
-3. **Data Types:** Every single field (except for lists and nulls) must be a STRING. 
+3. **Mandatory Data Types:** - Every root-level field must be either a **STRING** or an **ARRAY OF DICTIONARIES**. 
+    - Within any dictionary inside an array, every value MUST be a **STRING**. 
+    - **NO NESTED OBJECTS:** Nested dictionaries or nested lists inside these arrays are strictly forbidden. Flatten all nested data into strings.
 4. **No Hallucinations:** Use null for missing links or emails. 
-5. **Strict JSON:** Return ONLY valid JSON. No markdown blocks, no preamble, no conversational filler.
-6. **Mandatory Schema Compliance:** For the sections "skills", "experience", "education", "achievements", and "social_engagements", you MUST strictly follow the provided BASE JSON STRUCTURE. Do not add or remove sub-keys for these specific sections.
-7. **Dynamic Section Discovery (Non-Standard Sections):** For any section found in the resume NOT part of the base schema (e.g., Projects, Certifications, Languages):
-    - Categorize them into a new root-level key using snake_case.
-    - **Structure:** These sections MUST be a **1D array of dictionaries**.
-    - **Value Restriction:** Inside these dictionaries, every value must be a **STRING**. 
-    - **Prohibition:** Do NOT use nested objects or arrays within these dynamic dictionaries. Use a flat key-value string format only.
-8. Output MUST start with {{ and end with }}.
+5. **Strict JSON:** Return ONLY valid JSON. No markdown blocks, no ```json preamble, no conversational filler.
+6. **Mandatory Schema Compliance:** For "skills", "experience", "education", "achievements", and "social_engagements", follow the base structure provided below.
+7. **Dynamic Section Discovery (Non-Standard Sections):** For sections like Projects, Certifications, or Languages:
+    - Categorize them into new root-level keys using snake_case.
+    - Structure: 1D array of dictionaries where every value is a **STRING**.
+8. **One-Shot Learning Example (Expected Format):**
+{{
+  "full_name": "John Doe",
+  "summary": "Full-stack developer with 5 years experience...",
+  "experience": [
+    {{
+      "company": "Tech Innovations",
+      "role": "Software Engineer",
+      "duration": "Jan 2020 - Present",
+      "description": "Developed microservices using Python. Managed AWS deployment."
+    }}
+  ],
+  "certifications": [
+    {{
+      "name": "AWS Certified Solutions Architect",
+      "issuer": "Amazon",
+      "year": "2022"
+    }}
+  ]
+}}
+
+9. Output MUST start with {{ and end with }}.
+
 
 ### BASE JSON STRUCTURE (Extend as needed):
 {{
@@ -79,7 +102,7 @@ def load_resume_text(file_path: str) -> str:
     print(f"[parser] Loading and converting file to markdown: {file_path}")
     return pymupdf4llm.to_markdown(file_path)
 
-
+ 
 def _build_model():
     print("[parser] Building HuggingFace model instance...")
     # Create a model instance using HF token from env
@@ -114,6 +137,7 @@ def parse_markdown_and_extract(markdown: str) -> dict:
     prompt = ChatPromptTemplate.from_messages([("system", SYSTEM_PROMPT), ("human", HUMAN_PROMPT)])
     chain = prompt | model
     resp = chain.invoke({"resume_text": markdown}).content
+    print(resp)
     return _clean_model_response(resp)
 
 

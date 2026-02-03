@@ -27,7 +27,7 @@ function UploadPageContent() {
         // show generic error
         showToast(
           "Resumes could not be processed. Check logs or try again.",
-          1,
+          0,
         );
         console.error("Resumes could not be processed");
       }

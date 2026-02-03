@@ -70,8 +70,8 @@ const languageProficiencyOptions = [
 const animatedComponents = makeAnimated();
 
 /**
- * OPTIMIZATION: Debounced Input Component
- * Prevents the entire form from re-rendering on every single keystroke.
+ * REVISED: Debounced Input Component
+ * Uses an internal state that only syncs with props when NOT active.
  */
 const DebouncedInput = memo(
   ({
@@ -83,36 +83,30 @@ const DebouncedInput = memo(
     type = "text",
     required = false,
   }: any) => {
-    const [localValue, setLocalValue] = useState(value);
+    const [localValue, setLocalValue] = useState(value || "");
 
+    // Sync with external state only if value actually changes from parent
+    // and we aren't currently holding a different local value
     useEffect(() => {
-      setLocalValue(value);
+      setLocalValue(value || "");
     }, [value]);
 
-    const debouncedChange = useRef(
-      debounce((nextValue) => {
-        onChange({ target: { name, value: nextValue } });
-      }, 300),
-    ).current;
-
-    const handleLocalChange = (e: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value;
+      if (type === "number" && Number(val) < 0) {
+        showToast("Cannot be negative", 0);
+        return;
+      }
       setLocalValue(val);
-      debouncedChange(val);
+      onChange(val); // This is now a debounced function from the parent
     };
 
     return (
       <input
-        type="number"
+        type={type}
         name={name}
         value={localValue}
-        onChange={(e) => {
-          if (type === "number" && Number(e.target.value) < 0) {
-            showToast("Can not be negative", 0);
-            return;
-          }
-          handleLocalChange(e);
-        }}
+        onChange={handleChange}
         placeholder={placeholder}
         className={className}
         required={required}
@@ -120,6 +114,83 @@ const DebouncedInput = memo(
     );
   },
 );
+
+
+// Memoized role experience inputs with optimized debouncing
+const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
+  // Create debounced updaters for each field
+  const debouncedUpdates = useRef<Map<string, ReturnType<typeof debounce>>>(
+    new Map(),
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    const currentDebounces = debouncedUpdates.current;
+    return () => {
+      currentDebounces.forEach((debouncedFn) => debouncedFn.cancel());
+    };
+  }, []);
+
+  const handleLocalUpdate = (index: number, field: string, val: any) => {
+    // Create a unique key for this specific field
+    const key = `${index}-${field}`;
+
+    // Cancel any pending debounce for this specific field
+    if (debouncedUpdates.current.has(key)) {
+      debouncedUpdates.current.get(key)?.cancel();
+    }
+
+    // Create new debounced function for this update
+    const debouncedFn = debounce((index: number, field: string, val: any) => {
+      const newArr = [...value];
+      newArr[index] = { ...newArr[index], [field]: val };
+      onChange(newArr);
+    }, 300); // Reduced from 500ms for better responsiveness
+
+    // Store and execute
+    debouncedUpdates.current.set(key, debouncedFn);
+    debouncedFn(index, field, val);
+  };
+
+  return (
+    <div className="space-y-2">
+      {value.map((item: any, idx: number) => (
+        <div key={`exp-row-${idx}`} className="flex gap-2 items-center">
+          <DebouncedInput
+            placeholder="Role"
+            value={item.role}
+            onChange={(val: string) => handleLocalUpdate(idx, "role", val)}
+            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
+          />
+          <DebouncedInput
+            type="number"
+            placeholder="Years"
+            value={item.years}
+            onChange={(val: string) => handleLocalUpdate(idx, "years", val)}
+            className="w-24 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
+          />
+          <button
+            type="button"
+            className="px-2 py-1 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600 transition"
+            onClick={() => {
+              const filtered = value.filter((_: any, i: any) => i !== idx);
+              onChange(filtered);
+            }}
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="mt-1 px-4 py-1 cursor-pointer bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm text-gray-700 dark:text-gray-200"
+        onClick={() => onChange([...value, { role: "", years: "" }])}
+      >
+        + Add Experience
+      </button>
+    </div>
+  );
+});
 
 // Memoized multi-select input for primary languages
 const MemoizedLanguageSelect = memo(
@@ -184,55 +255,6 @@ const MemoizedLanguageSelect = memo(
     );
   },
 );
-
-// Memoized role experience inputs
-const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
-  const handleItemChange = (index: number, field: string, val: any) => {
-    const newArr = [...value];
-    newArr[index] = { ...newArr[index], [field]: val };
-    onChange(newArr);
-  };
-
-  return (
-    <div className="space-y-2">
-      {value.map((item: any, idx: number) => (
-        <div key={idx} className="flex gap-2 items-center">
-          <DebouncedInput
-            placeholder="Role"
-            value={item.role}
-            onChange={(e: any) => handleItemChange(idx, "role", e.target.value)}
-            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
-          />
-          <DebouncedInput
-            type="number"
-            placeholder="Years"
-            value={item.years}
-            onChange={(e: any) =>
-              handleItemChange(idx, "years", e.target.value)
-            }
-            className="w-24 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
-          />
-          <button
-            type="button"
-            className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-            onClick={() =>
-              onChange(value.filter((_: any, i: any) => i !== idx))
-            }
-          >
-            Remove
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        className="mt-1 px-4 py-1 cursor-pointer bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm text-gray-700 dark:text-gray-200"
-        onClick={() => onChange([...value, { role: "", years: "" }])}
-      >
-        + Add Experience
-      </button>
-    </div>
-  );
-});
 
 const JobConstraintsFormContent = memo(
   ({
@@ -756,7 +778,9 @@ export default function PreferencesPage() {
 
   useEffect(() => {
     try {
-      const state = JSON.parse(sessionStorage.getItem("onboardingState") || "{}");
+      const state = JSON.parse(
+        sessionStorage.getItem("onboardingState") || "{}",
+      );
       if (state.userData) setonboardingUser(state.userData);
       if (state.userPreference) {
         function stripInternal(o: any): any {
@@ -773,8 +797,8 @@ export default function PreferencesPage() {
         }
         setForm(stripInternal(state.userPreference));
       }
-    } catch (e:any) {
-      showToast(e?.message || "Error occured. Please refresh the page.")
+    } catch (e: any) {
+      showToast(e?.message || "Error occured. Please refresh the page.");
     } finally {
       setLoading(false);
     }

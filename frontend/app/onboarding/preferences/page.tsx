@@ -163,6 +163,7 @@ const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
               onChange={(val: any) =>
                 handleLocalUpdate(idx, "role", val["value"])
               }
+              required={true}
               className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
             />
             <DebouncedInput
@@ -172,6 +173,7 @@ const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
               onChange={(val: any) =>
                 handleLocalUpdate(idx, "years", val["value"])
               }
+              required={true}
               className="w-24 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
             />
             <button
@@ -350,6 +352,7 @@ const JobConstraintsFormContent = memo(
                     onChange={handleChange}
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
                     placeholder="e.g. H1B, PR, etc."
+                    required={true}
                   />
                 </div>
                 <div>
@@ -372,6 +375,7 @@ const JobConstraintsFormContent = memo(
                     menuPortalTarget={
                       typeof window !== "undefined" ? document.body : undefined
                     }
+                    required={true}
                   />
                 </div>
               </>
@@ -400,6 +404,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
                 {form.noticePeriod?.toLowerCase() === "specific date" && (
                   <div className="mt-2">
@@ -408,10 +413,26 @@ const JobConstraintsFormContent = memo(
                       type="date"
                       value={form.startDate}
                       onChange={handleChange}
+                      required={true}
                       className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
                     />
                   </div>
                 )}
+              </div>
+
+              <div>
+                <label className="block font-semibold mb-2 text-gray-700 dark:text-gray-200">
+                  Base salary
+                </label>
+                <DebouncedInput
+                  name="minimumSalary"
+                  type="number"
+                  value={form.minimumSalary}
+                  onChange={handleChange}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  placeholder="Enter the minimum salary required to apply a job"
+                  required={true}
+                />
               </div>
 
               <div>
@@ -436,6 +457,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
               </div>
 
@@ -461,6 +483,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
               </div>
             </div>
@@ -493,6 +516,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
               </div>
 
@@ -518,6 +542,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
               </div>
             </div>
@@ -568,6 +593,7 @@ const JobConstraintsFormContent = memo(
                 menuPortalTarget={
                   typeof window !== "undefined" ? document.body : undefined
                 }
+                required={true}
               />
             </div>
 
@@ -592,6 +618,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
               </div>
               <div className="flex-1">
@@ -613,6 +640,7 @@ const JobConstraintsFormContent = memo(
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
+                  required={true}
                 />
               </div>
             </div>
@@ -627,7 +655,7 @@ const JobConstraintsFormContent = memo(
                 onChange={handleChange}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
                 placeholder="Preferred companies (comma separated)"
-                required
+                required={true}
               />
             </div>
 
@@ -676,6 +704,7 @@ export default function PreferencesPage() {
     cityPreference: [],
     countryPreference: [],
     companyPreference: "",
+    minimumSalary: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -761,6 +790,37 @@ export default function PreferencesPage() {
     return prev;
   }, [form]);
 
+  const preProcessTheForm = useCallback((obj:any) => {
+    obj["visaCountries"] = obj["visaCountries"].map((el: any) => ({
+      value: el,
+      label: el,
+    }));
+    obj["primaryLanguages"] = obj["primaryLanguages"].map((el: any) => ({
+      language: {
+        value: el.language,
+        label: el.language,
+      },
+      proficiency: {
+        value: el.proficiency,
+        label: el.proficiency,
+      },
+    }));
+    obj["workMode"] = obj["workMode"].map((el: any) => ({
+      value: el,
+      label: el,
+    }));
+    obj["cityPreference"] = obj["cityPreference"].map((el: any) => ({
+      value: el,
+      label: el,
+    }));
+    obj["countryPreference"] = obj["countryPreference"].map((el: any) => ({
+      value: el,
+      label: el,
+    }));
+
+    return obj;
+  }, []);
+
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -808,19 +868,19 @@ export default function PreferencesPage() {
       );
       if (state.userData) setonboardingUser(state.userData);
       if (state.userPreference) {
-        function stripInternal(o: any): any {
-          if (Array.isArray(o)) return o.map((v) => stripInternal(v));
-          if (o && typeof o === "object") {
-            const out: any = {};
-            for (const k of Object.keys(o)) {
-              if (k.startsWith("_")) continue;
-              out[k] = stripInternal(o[k]);
-            }
-            return out;
-          }
-          return o;
-        }
-        setForm(stripInternal(state.userPreference));
+        // function stripInternal(o: any): any {
+        //   if (Array.isArray(o)) return o.map((v) => stripInternal(v));
+        //   if (o && typeof o === "object") {
+        //     const out: any = {};
+        //     for (const k of Object.keys(o)) {
+        //       if (k.startsWith("_")) continue;
+        //       out[k] = stripInternal(o[k]);
+        //     }
+        //     return out;
+        //   }
+        //   return o;
+        // }
+        setForm(preProcessTheForm(state.userPreference));
       }
     } catch (e: any) {
       showToast(e?.message || "Error occured. Please refresh the page.");

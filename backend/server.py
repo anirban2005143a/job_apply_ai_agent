@@ -8,11 +8,12 @@ import jwt
 import bcrypt
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
+from bson import ObjectId
 
 from document_loader import parser
 from db.mongo_db import profile_collection
 from data_types import RegisterRequest , LoginRequest
-from jwt_token import create_token
+from jwt_token import create_token, JWT_ALGORITHM , JWT_EXP_DAYS , JWT_SECRET 
 
 # WebSocket manager for live job updates
 from fastapi import WebSocket, WebSocketDisconnect
@@ -145,15 +146,29 @@ async def verify_token(request: Request):
         raise HTTPException(status_code=401, detail="Missing or invalid token format")
     
     token = auth_header.split(" ")[1]
-    
+        
     try:
         # Decode the token using your existing JWT settings
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        print("payload " , payload)
+        
+        user_id_str = payload.get("user_id")
+        
+        if not user_id_str:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+        
+        # CRITICAL FIX: Convert string ID to MongoDB ObjectId
+        try:
+            user_id_obj = ObjectId(user_id_str)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Malformed User ID")
+        
         
         # Optionally: Verify user still exists in DB
-        user = profile_collection.find_one({"_id": payload.get("user_id")})
-        if not user: 
-            raise Exception("User not found")
+        user = profile_collection.find_one({"_id": user_id_obj})
+        
+        if not user:
+            raise HTTPException(status_code=401, detail="User no longer exists")
 
         return {"valid": True, "user_id": payload.get("user_id")}
     except jwt.ExpiredSignatureError:

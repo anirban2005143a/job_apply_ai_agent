@@ -6,7 +6,7 @@ export function Hero() {
     <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
       {/* Background gradient */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-muted/30 blur-3xl" />
+        <div className="absolute top-0 left-1/2 h-125 w-200 -translate-x-1/2 rounded-full bg-muted/30 blur-3xl" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6">

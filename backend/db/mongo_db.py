@@ -8,6 +8,8 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 
+print("Connect to database " , MONGO_URI)
+
 # Export the specific database/collection for use in nodes
 db = client["job_apply_agent"]
 profile_collection = db["user_profiles"]

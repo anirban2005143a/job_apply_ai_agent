@@ -34,10 +34,10 @@ const workModes = [
 
 const noticeOptions = [
   { value: "immediately", label: "Immediately" },
-  { value: "2_weeks", label: "2 weeks" },
-  { value: "1_month", label: "1 month" },
-  { value: "3_months", label: "3 months" },
-  { value: "specific_date", label: "Specific date" },
+  { value: "2 weeks", label: "2 weeks" },
+  { value: "1 month", label: "1 month" },
+  { value: "3 months", label: "3 months" },
+  { value: "specific date", label: "Specific date" },
 ];
 
 const relocationOptions = [
@@ -98,7 +98,8 @@ const DebouncedInput = memo(
         return;
       }
       setLocalValue(val);
-      onChange(val); // This is now a debounced function from the parent
+      // console.log({ name: name, value: val })
+      onChange({ name: name, value: val }); // This is now a debounced function from the parent
     };
 
     return (
@@ -114,7 +115,6 @@ const DebouncedInput = memo(
     );
   },
 );
-
 
 // Memoized role experience inputs with optimized debouncing
 const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
@@ -145,7 +145,7 @@ const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
       const newArr = [...value];
       newArr[index] = { ...newArr[index], [field]: val };
       onChange(newArr);
-    }, 300); // Reduced from 500ms for better responsiveness
+    }, 500); // Reduced from 100ms for better responsiveness
 
     // Store and execute
     debouncedUpdates.current.set(key, debouncedFn);
@@ -154,33 +154,39 @@ const MemoizedRoleExperience = memo(({ value, onChange }: any) => {
 
   return (
     <div className="space-y-2">
-      {value.map((item: any, idx: number) => (
-        <div key={`exp-row-${idx}`} className="flex gap-2 items-center">
-          <DebouncedInput
-            placeholder="Role"
-            value={item.role}
-            onChange={(val: string) => handleLocalUpdate(idx, "role", val)}
-            className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
-          />
-          <DebouncedInput
-            type="number"
-            placeholder="Years"
-            value={item.years}
-            onChange={(val: string) => handleLocalUpdate(idx, "years", val)}
-            className="w-24 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
-          />
-          <button
-            type="button"
-            className="px-2 py-1 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600 transition"
-            onClick={() => {
-              const filtered = value.filter((_: any, i: any) => i !== idx);
-              onChange(filtered);
-            }}
-          >
-            Remove
-          </button>
-        </div>
-      ))}
+      {value.map((item: any, idx: number) => {
+        return (
+          <div key={`exp-row-${idx}`} className="flex gap-2 items-center">
+            <DebouncedInput
+              placeholder="Role"
+              value={item.role}
+              onChange={(val: any) =>
+                handleLocalUpdate(idx, "role", val["value"])
+              }
+              className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
+            />
+            <DebouncedInput
+              type="number"
+              placeholder="Years"
+              value={item.years}
+              onChange={(val: any) =>
+                handleLocalUpdate(idx, "years", val["value"])
+              }
+              className="w-24 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 transition outline-none"
+            />
+            <button
+              type="button"
+              className="px-2 py-1 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600 transition"
+              onClick={() => {
+                const filtered = value.filter((_: any, i: any) => i !== idx);
+                onChange(filtered);
+              }}
+            >
+              Remove
+            </button>
+          </div>
+        );
+      })}
       <button
         type="button"
         className="mt-1 px-4 py-1 cursor-pointer bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm text-gray-700 dark:text-gray-200"
@@ -395,7 +401,7 @@ const JobConstraintsFormContent = memo(
                     typeof window !== "undefined" ? document.body : undefined
                   }
                 />
-                {form.noticePeriod === "specific_date" && (
+                {form.noticePeriod?.toLowerCase() === "specific date" && (
                   <div className="mt-2">
                     <DebouncedInput
                       name="startDate"
@@ -694,7 +700,7 @@ export default function PreferencesPage() {
         .slice(0, 30)
         .map((city) => ({ value: city, label: city }));
       callback(matches);
-    }, 300),
+    }, 100),
     [cityList, defaultCityOptions],
   );
 
@@ -708,7 +714,7 @@ export default function PreferencesPage() {
         .filter((c) => c.label.toLowerCase().includes(inputValue.toLowerCase()))
         .slice(0, 30);
       callback(matches);
-    }, 300),
+    }, 100),
     [defaultCountryOptions],
   );
 
@@ -724,6 +730,7 @@ export default function PreferencesPage() {
 
     setForm((prev: any) => {
       if (singleValueFields.has(name)) {
+        console.log("option:", name, option);
         const value =
           typeof option === "string" ? option : ((option as any)?.value ?? "");
         return { ...prev, [name]: value };
@@ -732,33 +739,51 @@ export default function PreferencesPage() {
     });
   }, []);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = useCallback((obj: any) => {
+    const { name, value } = obj;
+    // console.log(name , value)
     setForm((prev: any) => ({ ...prev, [name]: value }));
   }, []);
+
+  const postProcessTheForm = useCallback(() => {
+    const prev = form;
+    prev["visaCountries"] = prev["visaCountries"].map((el: any) => el.value);
+    prev["primaryLanguages"] = prev["primaryLanguages"].map((el: any) => ({
+      language: el.language.value,
+      proficiency: el.proficiency.value,
+    }));
+    prev["workMode"] = prev["workMode"].map((el: any) => el.value);
+    prev["cityPreference"] = prev["cityPreference"].map((el: any) => el.value);
+    prev["countryPreference"] = prev["countryPreference"].map(
+      (el: any) => el.value,
+    );
+
+    return prev;
+  }, [form]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setSubmitting(true);
       try {
-        function stripInternal(o: any): any {
-          if (Array.isArray(o)) return o.map((v) => stripInternal(v));
-          if (o && typeof o === "object") {
-            const out: any = {};
-            for (const k of Object.keys(o)) {
-              if (k.startsWith("_")) continue;
-              out[k] = stripInternal(o[k]);
-            }
-            return out;
-          }
-          return o;
-        }
+        // function stripInternal(o: any): any {
+        //   if (Array.isArray(o)) return o.map((v) => stripInternal(v));
+        //   if (o && typeof o === "object") {
+        //     const out: any = {};
+        //     for (const k of Object.keys(o)) {
+        //       if (k.startsWith("_")) continue;
+        //       out[k] = stripInternal(o[k]);
+        //     }
+        //     return out;
+        //   }
+        //   return o;
+        // }
 
-        const cleaned = removeEmptyItemsRecursively(stripInternal(form));
+        const cleaned = postProcessTheForm();
         const current = JSON.parse(
           sessionStorage.getItem("onboardingState") || "{}",
         );
+        console.log(cleaned);
         current.userPreference = cleaned;
         sessionStorage.setItem("onboardingState", JSON.stringify(current));
 
@@ -810,6 +835,8 @@ export default function PreferencesPage() {
 
   const currentCountry =
     onboardingUser?.country || onboardingUser?.location?.country;
+
+  console.log(form);
 
   return (
     <>

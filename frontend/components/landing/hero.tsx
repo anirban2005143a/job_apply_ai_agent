@@ -28,10 +28,13 @@ export function Hero() {
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="gap-2">
-              Start Applying
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+            {/* Link to login page so users can sign in/start onboarding */}
+            <a href="/login">
+              <Button size="lg" className="gap-2">
+                Start Applying
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </a>
             <Button variant="outline" size="lg" className="bg-transparent">
               See Demo
             </Button>

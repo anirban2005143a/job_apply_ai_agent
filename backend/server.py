@@ -1,30 +1,26 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File, Request
 from typing import List, Optional
-from langgraph.types import Command
-from datetime import datetime
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
 import os
+import jwt
 import bcrypt
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 from document_loader import parser
 from db.mongo_db import profile_collection
-from graph import agent_executor
-from scheduler import scheduler , scheduled_job_task
+from data_types import RegisterRequest , LoginRequest
+from jwt_token import create_token
 
 # WebSocket manager for live job updates
 from fastapi import WebSocket, WebSocketDisconnect
-from ws import manager as ws_manager
-
-
 
 # Registration endpoint
 from pydantic import BaseModel
 
-class RegisterRequest(BaseModel):
-    user: dict
-    password: str
+load_dotenv()
 
 app = FastAPI(title="Job Apply Agent API")
 
@@ -37,21 +33,10 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# Input model for the API
-class ChatInput(BaseModel):
-    user_id: str
-    thread_id: str
-    user_profile: Optional[dict] = None
-    user_response: Optional[str] = None  # Used when replying to a clarification
-    user_intent_hint: Optional[str] = None  # Optional hint from client (e.g., 'CHAT')
-    simple: Optional[bool] = False  # When true, pass input directly to model and return its reply
-
-
 
 @app.get("/health")
 def health():
     return {"status": "ok", "time": datetime.utcnow().isoformat()}
-
 
 
 @app.post("/parse-resumes")
@@ -88,7 +73,6 @@ async def parse_resumes(files: List[UploadFile] = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
 @app.post("/api/register")
 async def register(req: RegisterRequest):
     try:
@@ -103,16 +87,82 @@ async def register(req: RegisterRequest):
         # Hash password
         hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
         user_to_store = {**user, "password": hashed, "created_at": datetime.utcnow().isoformat()}
-        profile_collection.insert_one(user_to_store)
-        return {"success": True}
+        res = profile_collection.insert_one(user_to_store)
+
+        # Create token and return it along with user info (without password)
+        user_to_return = {**user, "created_at": user_to_store["created_at"], "_id": str(res.inserted_id)}
+        token = create_token({"user_id": user_to_return["_id"], "email": email})
+
+        return {"success": True, "user": user_to_return, "token": token}
     except HTTPException as e:
         print(e)
-        raise e
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         print(f"[server] Error in /api/register: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-    
 
+@app.post("/api/login")
+async def login(req: LoginRequest):
+    """Login endpoint: validate email/password against stored user and return token."""
+    try:
+        email = req.email
+        password = req.password
+        if not email or not password:
+            raise HTTPException(status_code=400, detail="Email and password required.")
+
+        user = profile_collection.find_one({"email": email})
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        hashed = user.get("password")
+        if not hashed or not bcrypt.checkpw(password.encode(), hashed.encode()):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        # Remove sensitive fields before returning
+        user.pop("password", None)
+        user_id = str(user.get("_id")) if user.get("_id") else None
+        if user_id:
+            user["_id"] = user_id
+
+        token = create_token({"user_id": user_id, "email": email})
+
+        return {"success": True, "user": user, "token": token}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[server] Error in /api/login: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Add this near your other routes in server.py
+
+@app.get("/api/verify-token")
+async def verify_token(request: Request):
+    """Checks if the JWT token in the Authorization header is valid."""
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid token format")
+    
+    token = auth_header.split(" ")[1]
+    
+    try:
+        # Decode the token using your existing JWT settings
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        
+        # Optionally: Verify user still exists in DB
+        user = profile_collection.find_one({"_id": payload.get("user_id")})
+        if not user: 
+            raise Exception("User not found")
+
+        return {"valid": True, "user_id": payload.get("user_id")}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Authentication failed")
+    
+    
 if __name__ == "__main__":
     uvicorn.run("server:app", host="0.0.0.0", port=int(os.getenv('PORT', 8000)), reload=True)

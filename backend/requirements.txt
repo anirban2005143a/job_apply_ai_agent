@@ -8,3 +8,4 @@ langchain_huggingface
 langchain_core
 bcrypt
 requests
+PyJWT

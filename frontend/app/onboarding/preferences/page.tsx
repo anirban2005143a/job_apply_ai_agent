@@ -889,8 +889,22 @@ export default function PreferencesPage() {
     }
   }, []);
 
-  if (loading) {
-    return <div className="p-8">Loading preferences…</div>;
+  if (loading) {return (
+      <div className="flex flex-col items-center justify-center  bg-zinc-100  dark:bg-zinc-950 rounded-xl px-6 py-8">
+        <div className="flex flex-col items-center space-y-4">
+          {/* Simple CSS Spinner */}
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-200 border-t-primary dark:border-zinc-800" />
+          <div className="text-center">
+            <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+              Loading preferences…
+            </h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              Preparing your data for editing...
+            </p>
+          </div>
+        </div>
+      </div>
+    ); <div className="p-8">Loading preferences…</div>;
   }
 
   const currentCountry =

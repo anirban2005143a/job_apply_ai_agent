@@ -63,6 +63,7 @@ export default function PasswordPage() {
       }
       if (res.ok) {
         showToast("Registration successful!", 1);
+        sessionStorage.removeItem("onboardingState")
         await new Promise((r) => setTimeout(r, 1500));
         router.push("/");
       } else {

@@ -4,9 +4,12 @@ import { HowItWorks } from "@/components/landing/how-it-works";
 import { Safety } from "@/components/landing/safety";
 import { Tracker } from "@/components/landing/tracker";
 import { Footer } from "@/components/landing/footer";
+import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
+    <>
+     <Navbar />
     <main className="min-h-screen bg-background">
       <Hero />
       <Features />
@@ -15,5 +18,6 @@ export default function Home() {
       <Tracker />
       <Footer />
     </main>
+    </>
   );
 }

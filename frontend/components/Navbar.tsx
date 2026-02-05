@@ -40,7 +40,7 @@ export default function Navbar() {
     document.cookie = "user_id=; path=/; max-age=0";
     setLoggedIn(false);
     setUserMenuOpen(false);
-    router.push("/login");
+    router.push("/");
   };
 
   return (
@@ -118,14 +118,14 @@ export default function Navbar() {
             <div className="flex items-center">
               <Button
                 variant="ghost"
-                className="h-8 px-4 text-[13px] font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                className="h-8 px-4 text-[13px] rounded-md font-medium text-zinc-600 hover:bg-gray-100 cursor-pointer hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                 onClick={() => router.push("/login")}
               >
                 Sign In
               </Button>
               <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-2" />
               <Button
-                className="h-8 rounded-sm bg-zinc-900 dark:bg-zinc-100 px-4 text-[12px] font-semibold text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200"
+                className="h-8 rounded-md bg-zinc-900 dark:bg-zinc-100 px-4 text-[12px] cursor-pointer font-semibold text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200"
                 onClick={() => router.push("/login")}
               >
                 Create Account

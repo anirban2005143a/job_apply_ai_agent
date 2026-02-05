@@ -64,7 +64,7 @@ class ApplyRequest(BaseModel):
     job_id: str
     resume: str = Field(..., example="Base64 or text of resume")
     cover_letter: Optional[str] = None
-    evidence_points: Optional[List[str]] = []
+    evidence_points: Optional[str] = None
 
 
 class ApplyResponse(BaseModel):
@@ -93,6 +93,21 @@ def job_exists(job_id: str, jobs_file: str = "./jobs.json") -> bool:
         return False
 
 
+def already_applied(applied_file: str, job_id: str, email: str) -> bool:
+    if not os.path.exists(applied_file):
+        return False
+
+    with open(applied_file, "r") as f:
+        try:
+            applied_jobs = json.load(f)
+        except json.JSONDecodeError:
+            return False
+
+    return any(
+        job.get("job_id") == job_id and job.get("email") == email
+        for job in applied_jobs
+    )
+
 @app.post("/search")
 async def search_jobs(request: SearchRequest):
     """Return top matching jobs for a user query."""
@@ -119,6 +134,13 @@ async def apply_job(payload: ApplyRequest):
         raise HTTPException(
             status_code=400,
             detail="Invalid job_id: job does not exist"
+        )
+    
+    # ---- prevent duplicate application ----
+    if already_applied(APPLIED_FILE, payload.job_id, str(payload.email)):
+        raise HTTPException(
+            status_code=409,
+            detail="You have already applied for this job with this email"
         )
     
     application_id = str(uuid4())
@@ -198,4 +220,4 @@ async def root():
 
 if __name__ == "__main__":
 
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=5000, reload=True)

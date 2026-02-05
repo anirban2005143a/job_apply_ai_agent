@@ -1,6 +1,8 @@
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from bson import ObjectId
+import json
 
 load_dotenv()
 
@@ -26,9 +28,32 @@ def connect_to_db():
         print("Error while connecting to database:", e)
         raise e
 
-def get_profile(email):
+def get_user_profile(user_id):
+    # Convert string ID to MongoDB ObjectId
+    try:
+        user_id_obj = ObjectId(user_id)
+    except Exception:
+        raise Exception("Malformed User ID")
+
+
     if profile_collection is None:
-        raise Exception("Database not connected. Call connect_to_db() first.")
-    return profile_collection.find_one({"email": email})
+        raise Exception("profile_collection is none")
+    else:
+        print("profile_collection is ready")
+
+    print("Finding user")
+    user = profile_collection.find_one({"_id": user_id_obj})
+
+    if not user:
+        raise Exception("User not found")
+
+    user.pop("password", None)
+    user.pop("_id", None)
+    user.pop("created_at", None)
+
+    return user
 
 
+# connect_to_db()
+
+# print(get_user_profile("69834eb4f44210db096c223c")["skills"])

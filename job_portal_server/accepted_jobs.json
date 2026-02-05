@@ -12,5 +12,12 @@
     "email": "alice@example.com",
     "decision_at": "2026-02-04T16:26:05.189742",
     "decision": "accepted"
+  },
+  {
+    "application_id": "70a23b1a-4c15-44bc-9348-e7947730808d",
+    "job_id": "job_002",
+    "email": "dasanirban268@gmail.com",
+    "decision_at": "2026-02-05T15:01:25.038357",
+    "decision": "accepted"
   }
 ]

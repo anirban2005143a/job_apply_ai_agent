@@ -98,8 +98,8 @@ def job_retry_worker(user:User , job:dict):
                 "evidence_points": evidence_points
             }
         
-            # Path to applied.json
-            applied_file_path = os.path.join(user_dir, "applied.json")
+            # Path to applied_jobs.json
+            applied_file_path = os.path.join(user_dir, "applied_jobs.json")
             # Load existing applied jobs (if file exists)
             if os.path.exists(applied_file_path):
                 with open(applied_file_path, "r") as f:
@@ -179,7 +179,7 @@ def find_jobs(user):
     if not os.path.exists(user_dir):
         os.makedirs(user_dir)
 
-    storage_path = os.path.join(user_dir, 'jobs.json')
+    storage_path = os.path.join(user_dir, 'pending_jobs.json')
     
     with open(storage_path, 'w') as f:
         json.dump(next_fifteen, f, indent=4)
@@ -195,7 +195,7 @@ def user_worker(user:User):
     PROCESS_INTERVAL = 4 * 3600
     READ_JOBS_INTERVAL = 20
 
-    jobs_file = f"./{user.user_id}/jobs.json"
+    jobs_file = f"./{user.user_id}/pending_jobs.json"
 
     print(f"Worker started for User {user.user_id}")
 

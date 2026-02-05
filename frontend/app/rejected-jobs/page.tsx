@@ -1,0 +1,213 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { ArrowUpRight, ShieldAlert, FilterX, Layers } from "lucide-react";
+import "react-circular-progressbar/dist/styles.css";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import Navbar from "@/components/Navbar";
+
+const RejectedJobsPage = () => {
+  const rejectedJobs = [
+    {
+      id: "job_041",
+      title: "Power BI Developer",
+      company: "EY India",
+      cities: ["Kochi"],
+      countries: ["India"],
+      is_remote: true,
+      is_hybride: false,
+      salary_offered: 850000,
+      start_date: "Immediate",
+      required_skills: ["Power BI", "DAX", "SQL"],
+      match_score: 20,
+      match_reason:
+        "The candidate's primary skills are in frontend and backend development using React, Node.js, and MongoDB, but do not include Power BI or SQL, which are required for the job. The candidate's achievement in competitive programming and hackathons does not align with the job requirements. The candidate is open to relocation and has a flexible notice period, but the salary is below the candidate's minimum requirement of ₹15,000. The job location and company are not preferred by the candidate.",
+    },
+    {
+      id: "job_041",
+      title: "Power BI Developer",
+      company: "EY India",
+      cities: ["Kochi"],
+      countries: ["India"],
+      is_remote: true,
+      is_hybride: false,
+      salary_offered: 850000,
+      start_date: "Immediate",
+      required_skills: ["Power BI", "DAX", "SQL"],
+      match_score: 20,
+      match_reason:
+        "The candidate's primary skills are in frontend and backend development using React, Node.js, and MongoDB, but do not include Power BI or SQL, which are required for the job. The candidate's achievement in competitive programming and hackathons does not align with the job requirements. The candidate is open to relocation and has a flexible notice period, but the salary is below the candidate's minimum requirement of ₹15,000. The job location and company are not preferred by the candidate.",
+    },
+    {
+      id: "job_041",
+      title: "Power BI Developer",
+      company: "EY India",
+      cities: ["Kochi"],
+      countries: ["India"],
+      is_remote: true,
+      is_hybride: false,
+      salary_offered: 850000,
+      start_date: "Immediate",
+      required_skills: ["Power BI", "DAX", "SQL"],
+      match_score: 20,
+      match_reason:
+        "The candidate's primary skills are in frontend and backend development using React, Node.js, and MongoDB, but do not include Power BI or SQL, which are required for the job. The candidate's achievement in competitive programming and hackathons does not align with the job requirements. The candidate is open to relocation and has a flexible notice period, but the salary is below the candidate's minimum requirement of ₹15,000. The job location and company are not preferred by the candidate.",
+    },
+  ];
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen pt-[80px] bg-[#fafafa] dark:bg-zinc-950 text-slate-900 dark:text-zinc-300 font-sans p-6">
+        <div className="max-w-5xl mx-auto">
+          {/* System Header */}
+          <header className="mb-6 flex flex-col gap-4 border-b border-slate-300 dark:border-zinc-800 pb-6">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-2">
+              <FilterX className="w-6 h-6 text-slate-500 dark:text-zinc-400" />
+              <h1 className="text-base md:text-lg font-extrabold uppercase tracking-wider text-slate-700 dark:text-zinc-300">
+                Model Exclusion Log
+              </h1>
+            </div>
+
+            {/* Description */}
+            <p className="text-[12px] md:text-sm text-slate-500 dark:text-zinc-400 max-w-lg leading-relaxed">
+              These opportunities were automatically filtered out by the
+              matching engine because they didn’t meet the required
+              compatibility or criteria thresholds.
+            </p>
+          </header>
+
+          {/* List */}
+          <div className="space-y-4">
+            {rejectedJobs.map((job) => (
+              <RejectedJobCard key={job.id} job={job} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default RejectedJobsPage;
+
+const RejectedJobCard = ({ job }: any) => {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setProgress(job.match_score), 100); // small delay
+    return () => clearTimeout(timeout);
+  }, [job.match_score]);
+  return (
+    <div className="group relative rounded-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-all">
+      <div className="p-4 sm:p-5">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Left: Score Indicator */}
+          <div className="flex flex-row lg:flex-col items-center justify-center lg:w-20 shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-zinc-800 pb-4 lg:pb-0 ">
+            <div className="w-12 h-12 flex justify-center">
+              <CircularProgressbar
+                value={progress}
+                text={`${job.match_score}%`}
+                strokeWidth={8}
+                styles={buildStyles({
+                  pathColor: "rgb(239 68 68)", // red-500
+                  trailColor: "rgb(203 213 225)", // slate-200
+                  textColor: "rgb(239 68 68)",
+                  textSize: "23px",
+                  pathTransitionDuration: 1,
+                })}
+              />
+            </div>
+            <p className="hidden lg:block text-[10px] whitespace-nowrap font-medium text-slate-500 dark:text-zinc-400 mt-2 tracking-wide">
+              Match score
+            </p>
+          </div>
+
+          {/* Center: Primary Content */}
+          <div className="flex-1">
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+              <div>
+                <h2 className="text-sm font-bold text-slate-900 dark:text-zinc-100 tracking-tight">
+                  {job.title}
+                </h2>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[11px] font-medium text-slate-500 dark:text-zinc-500">
+                    {job.company}
+                  </span>
+                  <span className="w-1 h-1 bg-slate-300 dark:bg-zinc-700 rounded-full" />
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-widest">
+                    Ref: {job.id}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-[12px] font-bold text-slate-500 dark:text-zinc-500 tracking-wide rounded">
+                <ShieldAlert className="w-3 h-3 text-red-400" />
+                Rejected
+              </div>
+            </div>
+
+            {/* Metadata Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+              <div className="flex flex-col">
+                <span className="text-[8px] uppercase font-bold text-slate-500 dark:text-zinc-400 tracking-widest">
+                  Location
+                </span>
+                <span className="text-[12px] font-medium truncate italic">
+                  {job.cities[0]}, {job.countries[0]}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[8px] uppercase font-bold text-slate-500 dark:text-zinc-400 tracking-widest">
+                  Offered
+                </span>
+                <span className="text-[12px] font-medium">
+                  ₹{(job.salary_offered / 100000).toFixed(1)} LPA
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[8px] uppercase font-bold text-slate-500 dark:text-zinc-400 tracking-widest">
+                  Work Mode
+                </span>
+                <span className="text-[12px] font-medium">
+                  {job.is_remote ? "Remote" : "Onsite"}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[8px] uppercase font-bold text-slate-500 dark:text-zinc-400 tracking-widest">
+                  Required
+                </span>
+                <span className="text-[12px] font-medium truncate">
+                  {job.required_skills.join(", ")}
+                </span>
+              </div>
+            </div>
+
+            {/* Model Logic Output */}
+            <div className="bg-[#fcfcfc] dark:bg-zinc-950 p-3 border border-slate-100 dark:border-zinc-800/50 rounded-sm">
+              <div className="flex items-center gap-1.5 mb-2">
+                <Layers className="w-3 h-3 text-slate-500 dark:text-zinc-400" />
+                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
+                  Analysis Feedback
+                </span>
+              </div>
+              <p className="text-[13px] leading-relaxed text-slate-600 dark:text-zinc-400 tracking-normal">
+                {job.match_reason}
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Actions */}
+          {/* <div className="lg:w-12 flex lg:flex-col justify-end lg:justify-start items-center gap-2 border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-zinc-800 pt-4 lg:pt-0 lg:pl-4">
+            <button
+              title="View original posting"
+              className="p-2 text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+          </div> */}
+        </div>
+      </div>
+    </div>
+  );
+};

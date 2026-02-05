@@ -1,0 +1,18 @@
+[
+  {
+    "id": "job_001",
+    "title": "DevOps Engineer",
+    "company": "TechMahindra",
+    "cities": ["Bengaluru"],
+    "countries": ["India"],
+    "is_remote": false,
+    "is_hybride": true,
+    "is_onsite": false,
+    "salary_offered": 1200000,
+    "visa_sponsorship_offered": false,
+    "start_date": "Within 1 month",
+    "required_skills": ["AWS", "Docker", "CI/CD"],
+    "description": "Managing cloud infrastructure and deployment pipelines.",
+    "clarification": "### JOB MISSION & DOMAIN:\nAs a DevOps Engineer at TechMahindra, the primary mission is to manage cloud infrastructure and deployment pipelines. The day-to-day reality involves working with AWS, Docker, and CI/CD tools to ensure seamless and efficient software deployment. This role demands a strong understanding of cloud computing, containerization, and automation. The DevOps Engineer will be responsible for:\n\n* Designing, implementing, and maintaining cloud infrastructure using AWS.\n* Ensuring the efficient deployment and management of applications using Docker and CI/CD tools.\n* Collaborating with cross-functional teams to identify and resolve infrastructure-related issues.\n* Developing and implementing automation scripts to improve deployment efficiency.\n\nThe technical environment requires expertise in AWS, Docker, and CI/CD tools, with a strong focus on automation and cloud infrastructure management.\n\n### COMPATIBILITY INDEX: 32% | High Risk\nGiven the significant technical gaps between the candidate's skills and the job requirements, the compatibility index is moderately low. However, the presence of critical mismatches, such as the lack of AWS experience and the absence of a relevant work authorization, heavily penalizes the score.\n\n### TECHNICAL DELTA:\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| AWS | Not mentioned | High Severity |\n| Docker | Mentioned, but no experience | Medium Severity |\n| CI/CD | Not mentioned | High Severity |\n| Cloud infrastructure management | Not mentioned | High Severity |\n\n### STRATEGIC MISMATCHES:\nThe following are critical mismatches that significantly impact the candidate's viability for the role:\n\n* **Visa Sponsorship**: The company does not offer visa sponsorship, and the candidate does not have a work authorization. \n* **Salary Expectations**: The candidate's minimum salary expectation of 15,000 is significantly lower than the offered salary of 1,200,000.\n* **Geographical Location**: The company is located in Bengaluru, but the candidate prefers cities like Kolkata, Mumbai, and Delhi, which may not be feasible for relocation.\n\n### SYSTEM ADVISORY:\nBased on the analysis, the following are the hard truths regarding the application:\n\n* **Candidate's skills**: While the candidate has a strong background in competitive programming, their skills and experience are not directly applicable to the DevOps Engineer role.\n* **Location and Visa**: The candidate's geographical preferences and lack of work authorization significantly impact their viability for the role.\n* **Salary expectations**: The candidate's minimum salary expectation is not aligned with the offered salary, which may  "
+  }
+]

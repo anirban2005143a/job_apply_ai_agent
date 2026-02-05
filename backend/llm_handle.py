@@ -106,6 +106,37 @@ EVIDENCE_POINTS_PROMPT = ChatPromptTemplate.from_messages([
     ("user", "### RAW EXPERIENCE/PROJECTS:\n{user_json}\n\n### TARGET JOB KEYWORDS:\n{job_json}")
 ])
 
+CLARIFICATION_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", (
+        "You are an Elite Career Intelligence Engine. Your task is to perform a clinical "
+        "feasibility study on a job application by cross-referencing candidate data "
+        "against job requirements.\n\n"
+        
+        "STRICT LOGIC RULES:\n"
+        "1. JOB-CENTRIC SUMMARY: The 'Executive Summary' must describe the DAY-TO-DAY REALITY "
+        "of the job and the specific technical challenges the domain presents. Do not summarize "
+        "the candidate here; summarize the mission they are being hired for.\n"
+        
+        "2. SCORE ACCURACY: You must penalize the 'Compatibility Index' heavily for 'High Severity' gaps. "
+        "If more than 2 'High Severity' technical gaps exist, the score CANNOT exceed 50%. "
+        "If a 'Critical' mismatch (like Salary or Visa) exists, the Risk Level MUST be 'High'.\n"
+        
+        "3. DATA INTEGRITY: In the Technical Delta table, if a required skill is not found in the "
+        "candidate's profile, you MUST write 'Not mentioned' in the Candidate Status column. "
+        "Do not leave cells blank or assume proficiency.\n"
+
+        "4. OUTPUT STRUCTURE:\n"
+        "   - ## JOB MISSION & DOMAIN: Describe the daily tasks and the tech environment.\n"
+        "   - ### COMPATIBILITY INDEX: [Score %] | [Risk Level].\n"
+        "   - ### TECHNICAL DELTA (Table): [Requirement | Candidate Status | Gap Severity].\n"
+        "   - ### STRATEGIC MISMATCHES: List dealbreakers (Location, Salary, Visa).\n"
+        "   - ### SYSTEM ADVISORY: Provide a high-density, bulleted summary of the final verdict. Focus on the 'Hard Truths' regarding the application's viability and the specific conditions the user must accept if they choose to proceed."
+        
+        "Tone: Clinical, formal, and brutally honest. Output in clean Markdown."
+    )),
+    ("user", "### CANDIDATE DATA:\n{user_json}\n\n### JOB SPECIFICATION:\n{job_json}")
+])
+
 # changable variables
 REJECT_THRESHOLD_SCORE = 40
 CLARIFY_THRESHOLD_SCORE = 70
@@ -200,8 +231,8 @@ def separate_and_rank_jobs(user:User , jobs:list):
         with open(path, 'w') as f:
             json.dump(current_data, f, indent=4)
 
-    if rejected_list: append_to_file('rejected.json', rejected_list)
-    if clarify_list: append_to_file('clarify.json', clarify_list)
+    if rejected_list: append_to_file('rejected_jobs.json', rejected_list)
+    if clarify_list: append_to_file('clarify_jobs.json', clarify_list)
 
     # 4. Sort applied jobs by score descending
     applied_jobs.sort(key=lambda x: x['match_score'], reverse=True)
@@ -311,6 +342,39 @@ def generate_evidence_points(user:User , job:dict , user_data=None):
         raise Exception("Failed to generate evidence points. Please check your LLM connection.")
 
 
+def generate_clarification(user:User , job:dict , user_data=None):
+    if not user_data:
+        raise Exception("user data is required")
+
+    print(f"Generating clarification for: {user.user_id}")
+
+    # 1. Prepare User Data 
+    # The LLM needs a string representation of the JSON
+    user_json = json.dumps(user_data)
+    job_json = json.dumps(job)
+
+    print("Calling chain")
+    # 2. Initialize the Chain
+    # Assuming 'model' is your ChatHuggingFace(llm=llm) instance
+    chain = CLARIFICATION_PROMPT | model
+
+    # 3. Invoke LLM
+    try:
+        response = chain.invoke({
+            "user_json": user_json,
+            "job_json": job_json
+        })
+        
+        # 4. Extract Content
+        # result.content contains the raw Markdown text
+        clarification_markdown = response.content if hasattr(response, 'content') else str(response)
+        
+        return clarification_markdown.strip()
+
+    except Exception as e:
+        print(f"Error generating clarification points: {e}")
+        raise Exception("Failed to generate clarification points. Please check your LLM connection.")
+
 user_id = "69834eb4f44210db096c223c"
 # query = generate_query_for_job_search(user_id)
 
@@ -393,24 +457,25 @@ user = User(user_id)
 #     "description": "Designing and maintaining cloud infrastructure."
 #   },
 # ]
+user_data = db.get_user_profile(user_id=user_id)
 
 # applied_jobs = separate_and_rank_jobs(user , jobs)
 # print("Confirmed jobs" , applied_jobs)
 
 job = {
-    "id": "job_002",
-    "title": "Frontend Developer",
-    "company": "Infosys",
-    "cities": ["Pune"],
+    "id": "job_001",
+    "title": "DevOps Engineer",
+    "company": "TechMahindra",
+    "cities": ["Bengaluru"],
     "countries": ["India"],
-    "is_remote": True,
-    "is_hybride": False,
+    "is_remote": False,
+    "is_hybride": True,
     "is_onsite": False,
-    "salary_offered": 900000,
+    "salary_offered": 1200000,
     "visa_sponsorship_offered": False,
-    "start_date": "Immediate",
-    "required_skills": ["React", "TypeScript", "HTML", "CSS"],
-    "description": "Building responsive and scalable frontend applications."
+    "start_date": "Within 1 month",
+    "required_skills": ["AWS", "Docker", "CI/CD"],
+    "description": "Managing cloud infrastructure and deployment pipelines."
 }
 
-# print(generate_evidence_points(user , job))
+print(generate_clarification(user , job , user_data))

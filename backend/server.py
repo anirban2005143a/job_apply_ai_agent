@@ -146,10 +146,16 @@ async def verify_token(request: Request):
         raise HTTPException(status_code=401, detail="Missing or invalid token format")
     
     token = auth_header.split(" ")[1]
-        
+    print("token " , token)
     try:
         # Decode the token using your existing JWT settings
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        payload = jwt.decode(token, 
+                            JWT_SECRET, 
+                            algorithms=[JWT_ALGORITHM],
+                            options={
+                                "verify_signature": True,
+                                "verify_exp": True,
+                            })
         print("payload " , payload)
         
         user_id_str = payload.get("user_id")

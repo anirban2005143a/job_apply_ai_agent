@@ -8,58 +8,81 @@ const applications = [
 ];
 
 const statusStyles: Record<string, string> = {
-  submitted: "bg-green-500/10 text-green-500",
-  queued: "bg-yellow-500/10 text-yellow-500",
-  failed: "bg-red-500/10 text-red-500",
+  submitted: "bg-green-500/10 text-green-500 border border-green-500/30",
+  queued: "bg-yellow-500/10 text-yellow-500 border border-yellow-500/30",
+  failed: "bg-red-500/10 text-red-500 border border-red-500/30",
 };
 
 export function Tracker() {
   return (
-    <section className="border-t border-border bg-card py-20 md:py-32">
+    <section id="tracker" className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#050505] py-24 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-foreground md:text-4xl">
-            Track every application
-          </h2>
-          <p className="mx-auto max-w-2xl text-muted-foreground">
-            Real-time status updates, submission receipts, and complete audit trail 
-            for every application in your queue.
+        
+        {/* Header - Technical & Formal */}
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <div className="h-px w-8 bg-zinc-900 dark:bg-zinc-100" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-500">Audit Trail</span>
+            </div>
+            <h2 className="text-2xl font-semibold tracking-tighter text-zinc-900 dark:text-zinc-100 uppercase">
+              Submission Registry
+            </h2>
+          </div>
+          <p className="text-[12px] text-zinc-500 dark:text-zinc-500 font-medium">
+            Synchronized with live application threads
           </p>
         </div>
 
-        <div className="mx-auto max-w-4xl overflow-hidden rounded-lg border border-border">
-          <div className="grid grid-cols-4 gap-4 border-b border-border bg-secondary px-6 py-3">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Company</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Role</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Match</span>
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</span>
-          </div>
-          <div className="divide-y divide-border">
-            {applications.map((app, index) => (
-              <div key={index} className="grid grid-cols-4 gap-4 px-6 py-4">
-                <span className="font-medium text-foreground">{app.company}</span>
-                <span className="truncate text-sm text-muted-foreground">{app.role}</span>
-                <span className="font-mono text-sm text-foreground">{app.match}</span>
-                <span className={`inline-flex w-fit items-center rounded-full px-2 py-0.5 text-xs capitalize ${statusStyles[app.status]}`}>
-                  {app.status}
-                </span>
-              </div>
-            ))}
-          </div>
+        {/* Table - High Density & Sharp Borders */}
+        <div className="overflow-x-auto border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/20">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/30">
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Entity</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Position</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Match</th>
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">System Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+              {applications.map((app, index) => (
+                <tr key={index} className="group hover:bg-zinc-50 dark:hover:bg-zinc-900/30 transition-colors">
+                  <td className="px-6 py-4 text-[13px] font-bold text-zinc-900 dark:text-zinc-100">
+                    {app.company}
+                  </td>
+                  <td className="px-6 py-4 text-[13px] text-zinc-600 dark:text-zinc-400">
+                    {app.role}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className="font-mono text-[11px] font-semibold text-zinc-500 dark:text-zinc-500">
+                      {app.match}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <span className={`inline-flex items-center rounded-xl px-2.5 py-1 text-[9px] font-black uppercase tracking-widest ${statusStyles[app.status]}`}>
+                      {app.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        <div className="mt-8 flex items-center justify-center gap-8 text-sm text-muted-foreground">
+        {/* System Summary Bar */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-4 border-t border-zinc-100 dark:border-zinc-900 pt-8">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-green-500" />
-            <span>3 Submitted</span>
+            <div className="h-2 w-2 bg-green-500 rounded-full" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">3 Executed</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-yellow-500" />
-            <span>2 Queued</span>
+            <div className="h-2 w-2 bg-zinc-300 dark:bg-zinc-700 rounded-full" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">2 In Queue</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
-            <span>1 Failed (will retry)</span>
+            <div className="h-2 w-2 bg-red-500 rounded-full" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">1 Fault (Auto-Retry)</span>
           </div>
         </div>
       </div>

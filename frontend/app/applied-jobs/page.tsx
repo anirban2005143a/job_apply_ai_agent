@@ -7,6 +7,7 @@ import { Footer } from "@/components/landing/footer";
 import Navbar from "@/components/Navbar";
 import { showToast } from "@/lib/showToast";
 import { ToastContainer } from "react-toastify";
+import { usePathname } from "next/navigation";
 
 // This matches the structure of the JSON you provided
 const MOCK_APPLICATIONS = [
@@ -153,7 +154,7 @@ const AppliedJobsPage = () => {
           throw new Error(data.detail || "Failed to fetch applied jobs");
         }
 
-        setApplications(data.jobs || []);
+        setApplications(data.jobs?.reverse() || []);
       } catch (err: any) {
         console.error(err);
         showToast(err.message || "Failed to load applications", 0);
@@ -165,8 +166,32 @@ const AppliedJobsPage = () => {
     fetchApplications();
   }, []);
 
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const hash = window.location.hash; // e.g. "#job_101"
+    if (!hash) return;
+
+    const id = hash.substring(1); // remove "#"
+
+    const timeout = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        // Calculate scroll position 80px above the element
+        const offset = 60; // px
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: "smooth" });
+
+        clearTimeout(timeout);
+      }
+    }, 100); // check every 50ms
+
+    return () => clearTimeout(timeout); // cleanup if unmounted
+  }, [pathname]);
+
   return (
     <>
+      {/* <ScrollToHash /> */}
       <ToastContainer />
       <div className="min-h-screen pt-[40px] bg-slate-50 dark:bg-zinc-950 transition-colors duration-300">
         <main className="max-w-6xl mx-auto px-6 py-10">
@@ -209,3 +234,7 @@ const AppliedJobsPage = () => {
 };
 
 export default AppliedJobsPage;
+
+const ScrollToHash = () => {
+  return null; // This component doesn’t render anything
+};

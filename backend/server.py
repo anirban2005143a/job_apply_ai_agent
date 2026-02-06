@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Request 
+from fastapi import FastAPI, HTTPException, UploadFile, File, Request , Path
 from fastapi import WebSocket , WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from typing import List, Optional
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from filelock import FileLock
+from typing import Dict , Any
 
+import httpx
 import json
 import asyncio
 import time
@@ -221,6 +223,7 @@ def start_user(user_id: str):
     Start processing jobs for a user.
     """
     try:
+        job_manager.add_user(user_id)
         job_manager.start_user(user_id)
         return {"status": "success", "message": f"User {user_id} started."}
     except Exception as e:
@@ -239,6 +242,50 @@ def stop_user(user_id: str):
     except Exception as e:
         print("Error in user stop api" , e)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/status/{user_id}")
+async def status_by_userid(user_id: str = Path(..., description="The user ID")) -> Dict[str, Any]:
+    """
+    Get the application status for a user by their user_id
+    by calling the remote /status?email=... API.
+    """
+
+    # Check if profile_collection exists
+    if db.profile_collection is None:
+        raise HTTPException(status_code=500, detail="Database not ready")
+    
+    # Lookup the user by user_id
+    user = db.get_user_profile(user_id=user_id)
+    if not user or "email" not in user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    email = user["email"]
+
+    # Call remote /status API
+    try:
+        STATUS_API_BASE_URL = os.getenv("API_BASE_URL")
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{STATUS_API_BASE_URL}/status",
+                params={"email": email},
+                timeout=10.0
+            )
+            response.raise_for_status()  # raise exception if not 2xx
+            status_data = response.json()
+
+        return {
+            "user_id": user_id,
+            "email": email,
+            "status": status_data
+        }
+
+    except httpx.HTTPStatusError as e:
+        print(e)
+        raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
+    except httpx.RequestError as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=f"Error calling status API: {str(e)}")
 
 
 @app.websocket("/ws/{user_id}")

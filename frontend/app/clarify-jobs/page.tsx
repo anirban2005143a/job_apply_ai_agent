@@ -109,7 +109,19 @@ const JobClarificationPage: React.FC = () => {
         }
 
         const data = await response.json();
-        setClarifyJobs(data.jobs || []);
+        const jobs = data.jobs?.reverse() || [];
+        setClarifyJobs(jobs);
+
+        // --- NEW: check hash after jobs are loaded ---
+        const hash = window.location.hash; // e.g. "#job_101"
+        if (hash) {
+          const jobId = hash.substring(1); // remove "#"
+          const index = jobs.findIndex((job: Job) => job.id === jobId);
+          if (index !== -1) {
+            setActiveJobIndex(index);
+          }
+        }
+        // ---------------------------------------------
       } catch (error) {
         console.error(error);
         showToast("Unable to load clarification jobs", 0);

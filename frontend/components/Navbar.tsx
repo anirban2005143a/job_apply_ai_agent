@@ -79,6 +79,7 @@ export default function Navbar() {
         {/* Desktop Navigation - Sans Serif & Professional */}
         <nav className="hidden items-center gap-8 md:flex">
           {[
+            { name: "Dashboard", href: "/dashboard" },
             { name: "Applied Jobs", href: "/applied-jobs" },
             { name: "Pending Jobs", href: "/pending-jobs" },
             { name: "Clarify Doubts", href: "/clarify-jobs" },

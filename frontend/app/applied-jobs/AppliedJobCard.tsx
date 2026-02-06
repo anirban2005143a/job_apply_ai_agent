@@ -53,7 +53,7 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-md shadow-sm transition-all duration-200 hover:border-slate-400 dark:hover:border-zinc-600">
+    <section id={application.job.id} className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-md shadow-sm transition-all duration-200 hover:border-slate-400 dark:hover:border-zinc-600">
       {/* Header Section */}
       <div className="p-4 sm:p-5">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -264,7 +264,7 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 };
 

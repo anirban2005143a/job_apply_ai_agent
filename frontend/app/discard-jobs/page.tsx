@@ -1,17 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  ShieldAlert,
-  FilterX,
-  Layers,
-  Trash2,
-} from "lucide-react";
+import { ShieldAlert, FilterX, Layers, Trash2 } from "lucide-react";
 import "react-circular-progressbar/dist/styles.css";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import { getCookie } from "../applied-jobs/page";
 import { showToast } from "@/lib/showToast";
 import { ToastContainer } from "react-toastify";
+import { usePathname } from "next/navigation";
 
 const RejectedJobsPage = () => {
   const [rejectedJobs, setRejectedJobs] = useState<any[]>([]);
@@ -37,7 +33,7 @@ const RejectedJobsPage = () => {
         }
 
         const data = await res.json();
-        setRejectedJobs(data.jobs || []);
+        setRejectedJobs(data.jobs?.reverse() || []);
       } catch (err: any) {
         console.error(err);
         showToast(err.message || "Failed to load rejected jobs", 0);
@@ -48,6 +44,29 @@ const RejectedJobsPage = () => {
 
     fetchRejectedJobs();
   }, []);
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const hash = window.location.hash; // e.g. "#job_101"
+    if (!hash) return;
+
+    const id = hash.substring(1); // remove "#"
+
+    const timeout = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        // Calculate scroll position 80px above the element
+        const offset = 60; // px
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: "smooth" });
+
+        clearTimeout(timeout);
+      }
+    }, 100); // check every 50ms
+
+    return () => clearTimeout(timeout); // cleanup if unmounted
+  }, [pathname]);
 
   if (loading) {
     return (
@@ -137,8 +156,12 @@ const RejectedJobCard = ({ job }: any) => {
     const timeout = setTimeout(() => setProgress(job.match_score), 100); // small delay
     return () => clearTimeout(timeout);
   }, [job.match_score]);
+
   return (
-    <div className="group relative rounded-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-all">
+    <section
+      id={job.id}
+      className="group relative rounded-md bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700 transition-all"
+    >
       <div className="p-4 sm:p-5">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Left: Score Indicator */}
@@ -246,6 +269,6 @@ const RejectedJobCard = ({ job }: any) => {
           </div> */}
         </div>
       </div>
-    </div>
+    </section>
   );
 };

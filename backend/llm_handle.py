@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import db.mongo_db as db
 import os
 import json
+from filelock import FileLock
 
 from data_types import User
 from document_loader.parser import _clean_model_response
@@ -261,16 +262,20 @@ def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
     def append_to_file(filename, new_data):
         path = os.path.join(user_dir, filename)
         current_data = []
+        lock_path = storage_path + ".lock"
 
-        # load current data from file 
-        if os.path.exists(path):
-            with open(path, 'r') as f:
-                try: current_data = json.load(f)
-                except: current_data = []
-        
-        current_data.extend(new_data)
-        with open(path, 'w') as f:
-            json.dump(current_data, f, indent=4)
+        lock = FileLock(lock_path , timeout=10)
+
+        with lock : 
+            # load current data from file 
+            if os.path.exists(path):
+                with open(path, 'r') as f:
+                    try: current_data = json.load(f)
+                    except: current_data = []
+            
+            current_data.extend(new_data)
+            with open(path, 'w') as f:
+                json.dump(current_data, f, indent=4)
 
     if not user.is_active:
         print("User is not active")

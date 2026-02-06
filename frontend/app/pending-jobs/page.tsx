@@ -19,6 +19,7 @@ import { ToastContainer } from "react-toastify";
 import { showToast } from "@/lib/showToast";
 import { Job } from "../applied-jobs/AppliedJobCard";
 import { getCookie } from "../applied-jobs/page";
+import { usePathname } from "next/navigation";
 
 const PendingJobsPage = () => {
   const [pendingJobs, setPendingJobs] = useState<Job[]>([]);
@@ -43,7 +44,7 @@ const PendingJobsPage = () => {
         }
 
         const data = await response.json();
-        setPendingJobs(data.jobs || []);
+        setPendingJobs(data.jobs?.reverse() || []);
       } catch (error) {
         console.error(error);
         showToast("Unable to load pending jobs", 0);
@@ -54,6 +55,29 @@ const PendingJobsPage = () => {
 
     fetchPendingJobs();
   }, []);
+
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const hash = window.location.hash; // e.g. "#job_101"
+    if (!hash) return;
+
+    const id = hash.substring(1); // remove "#"
+
+    const timeout = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        // Calculate scroll position 80px above the element
+        const offset = 60; // px
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: "smooth" });
+
+        clearTimeout(timeout);
+      }
+    }, 100); // check every 50ms
+
+    return () => clearTimeout(timeout); // cleanup if unmounted
+  }, [pathname]);
 
   if (loading) {
     return (
@@ -151,7 +175,10 @@ export default PendingJobsPage;
 
 const PendingJobCard = ({ job }: any) => {
   return (
-    <div className="relative bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300">
+    <section
+      id={job.id}
+      className="relative bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
+    >
       {/* Animated Status Top Bar */}
       <div className="h-1 w-full bg-amber-100 dark:bg-amber-900/30">
         <div
@@ -229,7 +256,7 @@ const PendingJobCard = ({ job }: any) => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

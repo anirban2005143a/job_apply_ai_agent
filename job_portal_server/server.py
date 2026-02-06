@@ -189,30 +189,33 @@ async def apply_job(payload: ApplyRequest):
 
 
 @app.get("/status")
-async def application_status(email: EmailStr, job_id: str):
-    """Check the status of a job application for a given email and job id."""
+async def application_status(email: EmailStr):
+    """Check the status of a job application for a given email."""
     email = str(email)
 
-    # search accepted
-    accepted = read_json(ACCEPTED_FILE)
-    for rec in accepted:
-        if rec.get("email") == email and rec.get("job_id") == job_id:
-            return {"status": "accepted", "record": rec}
+    try:
+        # Filter accepted
+        all_accepted = read_json(ACCEPTED_FILE)
+        accepted = [rec for rec in all_accepted if rec.get("email") == email]
 
-    # search rejected
-    rejected = read_json(REJECTED_FILE)
-    for rec in rejected:
-        if rec.get("email") == email and rec.get("job_id") == job_id:
-            return {"status": "rejected", "record": rec}
+        # Filter rejected
+        all_rejected = read_json(REJECTED_FILE)
+        rejected = [rec for rec in all_rejected if rec.get("email") == email]
 
-    # search pending
-    pending = read_json(PENDING_FILE)
-    for rec in pending:
-        if rec.get("email") == email and rec.get("job_id") == job_id:
-            return {"status": "pending", "record": rec}
+        # Filter pending
+        all_pending = read_json(PENDING_FILE)
+        on_process = [rec for rec in all_pending if rec.get("email") == email]
 
-    # otherwise no record found -> pending
-    raise HTTPException(status_code=400 , detail="Application not found") 
+        return {
+            "accepted": accepted,
+            "rejected": rejected,
+            "on_process": on_process
+        }
+
+    except Exception as e:
+        print(f"Error fetching status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching status: {str(e)}")
+
 
 @app.get("/")
 async def root():

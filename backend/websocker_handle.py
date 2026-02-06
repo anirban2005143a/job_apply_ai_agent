@@ -8,9 +8,11 @@ class WebSocket_Connection_Manager:
 
     async def connect(self, user_id: str, websocket: WebSocket):
         await websocket.accept()
+        print(f"Websocket from user {user_id} is accepted")
         self.active_connections[user_id] = websocket
 
     def disconnect(self, user_id: str):
+        print(f"user {user_id} is disconnected")
         if user_id in self.active_connections:
             del self.active_connections[user_id]
 

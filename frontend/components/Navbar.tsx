@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 import { Menu, X, LogOut, User, Terminal } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { NotificationMenu } from "./Notification";
 
 function getCookie(name: string) {
   if (typeof document === "undefined") return null;
@@ -15,13 +16,16 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState<number | boolean>(-1);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
+  const pathname = usePathname();
   const router = useRouter();
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const token = getCookie("token");
     const user_id = getCookie("user_id");
+    setUserId(user_id);
     setLoggedIn(!!(token && user_id));
   }, []);
 
@@ -43,11 +47,22 @@ export default function Navbar() {
     router.push("/");
   };
 
+  if (
+    pathname.toLowerCase().includes("onboarding") ||
+    pathname.toLowerCase().includes("login")
+  )
+    return;
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-[#050505]/90 backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
         {/* Logo Section - Formal & Structured */}
-        <div className="flex items-center gap-2.5">
+        <div
+          onClick={() => {
+            router.push("/");
+          }}
+          className="flex items-center gap-2.5 cursor-pointer"
+        >
           <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-zinc-900 dark:bg-zinc-100">
             <span className="text-[9px] font-black text-white dark:text-black">
               JP
@@ -63,13 +78,20 @@ export default function Navbar() {
 
         {/* Desktop Navigation - Sans Serif & Professional */}
         <nav className="hidden items-center gap-8 md:flex">
-          {["Features", "How It Works", "Safety"].map((item) => (
+          {[
+            { name: "Applied Jobs", href: "/applied-jobs" },
+            { name: "Pending Jobs", href: "/pending-jobs" },
+            { name: "Clarify Doubts", href: "/clarify-jobs" },
+            { name: "Discard Jobs", href: "/discard-jobs" },
+          ].map((item, ind) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-[13px] font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              key={ind}
+              onClick={() => {
+                router.push(item.href);
+              }}
+              className="text-[13px] cursor-pointer font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:underline underline-offset-4"
             >
-              {item}
+              {item.name}
             </a>
           ))}
         </nav>
@@ -77,41 +99,45 @@ export default function Navbar() {
         {/* Auth Actions - Industrial/Formal Style */}
         <div className="hidden items-center gap-4 md:flex">
           {loggedIn === true && (
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => setUserMenuOpen((s) => !s)}
-                className="flex cursor-pointer rounded-full h-10 w-10 items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 px-2 transition-all hover:border-zinc-400 dark:hover:border-zinc-600"
-              >
-                <div className="flex p-2 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800">
-                  <User
-                    size={18}
-                    className=" text-zinc-600 dark:text-zinc-400"
-                  />
-                </div>
-              </button>
+            <>
+              <NotificationMenu userId={userId} />
 
-              {/* Dropdown - Clean & Minimal */}
-              <div
-                className={`absolute right-0 mt-1.5 w-auto origin-top-right rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl transition-all ${
-                  userMenuOpen
-                    ? "scale-100 opacity-100"
-                    : "scale-95 opacity-0 pointer-events-none"
-                }`}
-              >
-                <div className="border-b pr-5  border-zinc-100 dark:border-zinc-900 px-4 py-2.5">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                    Authenticated
-                  </p>
-                </div>
+              <div className="relative" ref={menuRef}>
                 <button
-                  onClick={handleSignOut}
-                  className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-[12px] font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all"
+                  onClick={() => setUserMenuOpen((s) => !s)}
+                  className="flex cursor-pointer rounded-full h-10 w-10 items-center justify-center border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 px-2 transition-all hover:border-zinc-400 dark:hover:border-zinc-600"
                 >
-                  <LogOut className="h-3.5 w-3.5" />
-                  Log out
+                  <div className="flex p-2 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800">
+                    <User
+                      size={18}
+                      className=" text-zinc-600 dark:text-zinc-400"
+                    />
+                  </div>
                 </button>
+
+                {/* Dropdown - Clean & Minimal */}
+                <div
+                  className={`absolute right-0 mt-1.5 w-auto origin-top-right rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl transition-all ${
+                    userMenuOpen
+                      ? "scale-100 opacity-100"
+                      : "scale-95 opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <div className="border-b pr-5  border-zinc-100 dark:border-zinc-900 px-4 py-2.5">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                      Authenticated
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-[12px] font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all"
+                  >
+                    <LogOut className="h-3.5 w-3.5" />
+                    Log out
+                  </button>
+                </div>
               </div>
-            </div>
+            </>
           )}
 
           {loggedIn === false && (

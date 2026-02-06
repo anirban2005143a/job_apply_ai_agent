@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useOnboarding } from "@/components/OnboardingProvider";
 import EditableJsonForm from "@/components/EditableJsonForm";
-import demoUser from "@/data/demoUser";
 import { useRouter } from "next/navigation";
 import {
   applyPrioritiesRecursively,
@@ -17,51 +16,6 @@ function DetailsContent() {
   const router = useRouter();
   const { userData, setUserData } = useOnboarding();
   const [showJson, setShowJson] = useState(false);
-
-  // initialize provider userData with demo if not present (run once)
-  useEffect(() => {
-    function ensureCoreFields(obj: any) {
-      const out = { ...obj };
-      const core = [
-        "full_name",
-        "email",
-        "phone",
-        "linkedin_url",
-        "github_url",
-        "portfolio_url",
-      ];
-      for (const k of core) {
-        if (!(k in out)) out[k] = "";
-      }
-      return out;
-    }
-
-    if (!userData) {
-      // Strip any existing 'id' fields from demo data so ids are never shown or stored in UI
-      function stripIds(obj: any): any {
-        if (Array.isArray(obj)) return obj.map((v) => stripIds(v));
-        if (obj && typeof obj === "object") {
-          const out: any = {};
-          for (const k of Object.keys(obj)) {
-            if (k === "id") continue;
-            out[k] = stripIds(obj[k]);
-          }
-          return out;
-        }
-        return obj;
-      }
-      const cleaned = stripIds(demoUser);
-
-      // remove empty items (fixes the 'extra blank items' issue)
-      const cleaned2 = removeEmptyItemsRecursively(cleaned);
-
-      const withPriority = applyPrioritiesRecursively(
-        ensureCoreFields(cleaned2),
-      );
-      setUserData(withPriority);
-    }
-    // only set initial data if not present — don't overwrite existing provider state
-  }, []);
 
   if (!userData) {
     return (

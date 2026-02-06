@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import {
   Check,
@@ -15,65 +15,52 @@ import {
   CheckCircle,
   XCircle,
   Shield,
+  Inbox,
 } from "lucide-react";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import Navbar from "@/components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
-
-interface JobData {
-  id: string;
-  title: string;
-  company: string;
-  cities: string[];
-  countries: string[];
-  is_remote: boolean;
-  is_hybride: boolean;
-  is_onsite: boolean;
-  salary_offered: number;
-  visa_sponsorship_offered: boolean;
-  start_date: string;
-  required_skills: string[];
-  description: string;
-  clarification: string;
-}
+import { ToastContainer } from "react-toastify";
+import { Job } from "../applied-jobs/AppliedJobCard";
+import { getCookie } from "../applied-jobs/page";
+import { showToast } from "@/lib/showToast";
 
 // Mock Data
-const mockJobs: JobData[] = [
-  {
-    id: "job_001",
-    title: "DevOps Engineer",
-    company: "TechMahindra",
-    cities: ["Bengaluru"],
-    countries: ["India"],
-    is_remote: false,
-    is_hybride: true,
-    is_onsite: false,
-    salary_offered: 1200000,
-    visa_sponsorship_offered: false,
-    start_date: "Within 1 month",
-    required_skills: ["AWS", "Docker", "CI/CD"],
-    description: "Managing cloud infrastructure and deployment pipelines.",
-    clarification: `### JOB MISSION & DOMAIN:\nAs a DevOps Engineer at TechMahindra, the primary mission is to manage cloud infrastructure and deployment pipelines. The day-to-day reality involves working with AWS, Docker, and CI/CD tools to ensure seamless and efficient software deployment. This role demands a strong understanding of cloud computing, containerization, and automation. The DevOps Engineer will be responsible for:\n\n* Designing, implementing, and maintaining cloud infrastructure using AWS.\n* Ensuring the efficient deployment and management of applications using Docker and CI/CD tools.\n* Collaborating with cross-functional teams to identify and resolve infrastructure-related issues.\n* Developing and implementing automation scripts to improve deployment efficiency.\n\nThe technical environment requires expertise in AWS, Docker, and CI/CD tools, with a strong focus on automation and cloud infrastructure management.\n\n### COMPATIBILITY INDEX: 32% | High Risk\nGiven the significant technical gaps between the candidate's skills and the job requirements, the compatibility index is moderately low. However, the presence of critical mismatches, such as the lack of AWS experience and the absence of a relevant work authorization, heavily penalizes the score.\n\n### TECHNICAL DELTA:\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| AWS | Not mentioned | High Severity |\n| Docker | Mentioned, but no experience | Medium Severity |\n| CI/CD | Not mentioned | High Severity |\n| Cloud infrastructure management | Not mentioned | High Severity |\n\n### STRATEGIC MISMATCHES:\nThe following are critical mismatches that significantly impact the candidate's viability for the role:\n\n* **Visa Sponsorship**: The company does not offer visa sponsorship, and the candidate does not have a work authorization. \n* **Salary Expectations**: The candidate's minimum salary expectation of 15,000 is significantly lower than the offered salary of 1,200,000.\n* **Geographical Location**: The company is located in Bengaluru, but the candidate prefers cities like Kolkata, Mumbai, and Delhi, which may not be feasible for relocation.\n\n### SYSTEM ADVISORY:\nBased on the analysis, the following are the hard truths regarding the application:\n\n* **Candidate's skills**: While the candidate has a strong background in competitive programming, their skills and experience are not directly applicable to the DevOps Engineer role.\n* **Location and Visa**: The candidate's geographical preferences and lack of work authorization significantly impact their viability for the role.\n* **Salary expectations**: The candidate's minimum salary expectation is not aligned with the offered salary, which may  `,
-  },
-  {
-    id: "job_002",
-    title: "DevOps Engineer",
-    company: "TechMahindra",
-    cities: ["Bengaluru"],
-    countries: ["India"],
-    is_remote: false,
-    is_hybride: true,
-    is_onsite: false,
-    salary_offered: 1200000,
-    visa_sponsorship_offered: false,
-    start_date: "Within 1 month",
-    required_skills: ["AWS", "Docker", "CI/CD"],
-    description: "Managing cloud infrastructure and deployment pipelines.",
-    clarification:
-      "### JOB MISSION & DOMAIN:\nAs a DevOps Engineer at TechMahindra, the primary mission is to manage cloud infrastructure and deployment pipelines. The day-to-day reality involves working with AWS, Docker, and CI/CD tools to ensure seamless and efficient software deployment. This role demands a strong understanding of cloud computing, containerization, and automation. The DevOps Engineer will be responsible for:\n\n* Designing, implementing, and maintaining cloud infrastructure using AWS.\n* Ensuring the efficient deployment and management of applications using Docker and CI/CD tools.\n* Collaborating with cross-functional teams to identify and resolve infrastructure-related issues.\n* Developing and implementing automation scripts to improve deployment efficiency.\n\nThe technical environment requires expertise in AWS, Docker, and CI/CD tools, with a strong focus on automation and cloud infrastructure management.\n\n### COMPATIBILITY INDEX: 32% | High Risk\nGiven the significant technical gaps between the candidate's skills and the job requirements, the compatibility index is moderately low. However, the presence of critical mismatches, such as the lack of AWS experience and the absence of a relevant work authorization, heavily penalizes the score.\n\n### TECHNICAL DELTA:\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| AWS | Not mentioned | High Severity |\n| Docker | Mentioned, but no experience | Medium Severity |\n| CI/CD | Not mentioned | High Severity |\n| Cloud infrastructure management | Not mentioned | High Severity |\n\n### STRATEGIC MISMATCHES:\nThe following are critical mismatches that significantly impact the candidate's viability for the role:\n\n* **Visa Sponsorship**: The company does not offer visa sponsorship, and the candidate does not have a work authorization. \n* **Salary Expectations**: The candidate's minimum salary expectation of 15,000 is significantly lower than the offered salary of 1,200,000.\n* **Geographical Location**: The company is located in Bengaluru, but the candidate prefers cities like Kolkata, Mumbai, and Delhi, which may not be feasible for relocation.\n\n### SYSTEM ADVISORY:\nBased on the analysis, the following are the hard truths regarding the application:\n\n* **Candidate's skills**: While the candidate has a strong background in competitive programming, their skills and experience are not directly applicable to the DevOps Engineer role.\n* **Location and Visa**: The candidate's geographical preferences and lack of work authorization significantly impact their viability for the role.\n* **Salary expectations**: The candidate's minimum salary expectation is not aligned with the offered salary, which may  ",
-  },
-];
+// const mockJobs: Job[] = [
+//   {
+//     id: "job_001",
+//     title: "DevOps Engineer",
+//     company: "TechMahindra",
+//     cities: ["Bengaluru"],
+//     countries: ["India"],
+//     is_remote: false,
+//     is_hybride: true,
+//     is_onsite: false,
+//     salary_offered: 1200000,
+//     visa_sponsorship_offered: false,
+//     start_date: "Within 1 month",
+//     required_skills: ["AWS", "Docker", "CI/CD"],
+//     description: "Managing cloud infrastructure and deployment pipelines.",
+//     clarification: `### JOB MISSION & DOMAIN:\nAs a DevOps Engineer at TechMahindra, the primary mission is to manage cloud infrastructure and deployment pipelines. The day-to-day reality involves working with AWS, Docker, and CI/CD tools to ensure seamless and efficient software deployment. This role demands a strong understanding of cloud computing, containerization, and automation. The DevOps Engineer will be responsible for:\n\n* Designing, implementing, and maintaining cloud infrastructure using AWS.\n* Ensuring the efficient deployment and management of applications using Docker and CI/CD tools.\n* Collaborating with cross-functional teams to identify and resolve infrastructure-related issues.\n* Developing and implementing automation scripts to improve deployment efficiency.\n\nThe technical environment requires expertise in AWS, Docker, and CI/CD tools, with a strong focus on automation and cloud infrastructure management.\n\n### COMPATIBILITY INDEX: 32% | High Risk\nGiven the significant technical gaps between the candidate's skills and the job requirements, the compatibility index is moderately low. However, the presence of critical mismatches, such as the lack of AWS experience and the absence of a relevant work authorization, heavily penalizes the score.\n\n### TECHNICAL DELTA:\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| AWS | Not mentioned | High Severity |\n| Docker | Mentioned, but no experience | Medium Severity |\n| CI/CD | Not mentioned | High Severity |\n| Cloud infrastructure management | Not mentioned | High Severity |\n\n### STRATEGIC MISMATCHES:\nThe following are critical mismatches that significantly impact the candidate's viability for the role:\n\n* **Visa Sponsorship**: The company does not offer visa sponsorship, and the candidate does not have a work authorization. \n* **Salary Expectations**: The candidate's minimum salary expectation of 15,000 is significantly lower than the offered salary of 1,200,000.\n* **Geographical Location**: The company is located in Bengaluru, but the candidate prefers cities like Kolkata, Mumbai, and Delhi, which may not be feasible for relocation.\n\n### SYSTEM ADVISORY:\nBased on the analysis, the following are the hard truths regarding the application:\n\n* **Candidate's skills**: While the candidate has a strong background in competitive programming, their skills and experience are not directly applicable to the DevOps Engineer role.\n* **Location and Visa**: The candidate's geographical preferences and lack of work authorization significantly impact their viability for the role.\n* **Salary expectations**: The candidate's minimum salary expectation is not aligned with the offered salary, which may  `,
+//   },
+//   {
+//     id: "job_002",
+//     title: "DevOps Engineer",
+//     company: "TechMahindra",
+//     cities: ["Bengaluru"],
+//     countries: ["India"],
+//     is_remote: false,
+//     is_hybride: true,
+//     is_onsite: false,
+//     salary_offered: 1200000,
+//     visa_sponsorship_offered: false,
+//     start_date: "Within 1 month",
+//     required_skills: ["AWS", "Docker", "CI/CD"],
+//     description: "Managing cloud infrastructure and deployment pipelines.",
+//     clarification:
+//       "### JOB MISSION & DOMAIN:\nAs a DevOps Engineer at TechMahindra, the primary mission is to manage cloud infrastructure and deployment pipelines. The day-to-day reality involves working with AWS, Docker, and CI/CD tools to ensure seamless and efficient software deployment. This role demands a strong understanding of cloud computing, containerization, and automation. The DevOps Engineer will be responsible for:\n\n* Designing, implementing, and maintaining cloud infrastructure using AWS.\n* Ensuring the efficient deployment and management of applications using Docker and CI/CD tools.\n* Collaborating with cross-functional teams to identify and resolve infrastructure-related issues.\n* Developing and implementing automation scripts to improve deployment efficiency.\n\nThe technical environment requires expertise in AWS, Docker, and CI/CD tools, with a strong focus on automation and cloud infrastructure management.\n\n### COMPATIBILITY INDEX: 32% | High Risk\nGiven the significant technical gaps between the candidate's skills and the job requirements, the compatibility index is moderately low. However, the presence of critical mismatches, such as the lack of AWS experience and the absence of a relevant work authorization, heavily penalizes the score.\n\n### TECHNICAL DELTA:\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| AWS | Not mentioned | High Severity |\n| Docker | Mentioned, but no experience | Medium Severity |\n| CI/CD | Not mentioned | High Severity |\n| Cloud infrastructure management | Not mentioned | High Severity |\n\n### STRATEGIC MISMATCHES:\nThe following are critical mismatches that significantly impact the candidate's viability for the role:\n\n* **Visa Sponsorship**: The company does not offer visa sponsorship, and the candidate does not have a work authorization. \n* **Salary Expectations**: The candidate's minimum salary expectation of 15,000 is significantly lower than the offered salary of 1,200,000.\n* **Geographical Location**: The company is located in Bengaluru, but the candidate prefers cities like Kolkata, Mumbai, and Delhi, which may not be feasible for relocation.\n\n### SYSTEM ADVISORY:\nBased on the analysis, the following are the hard truths regarding the application:\n\n* **Candidate's skills**: While the candidate has a strong background in competitive programming, their skills and experience are not directly applicable to the DevOps Engineer role.\n* **Location and Visa**: The candidate's geographical preferences and lack of work authorization significantly impact their viability for the role.\n* **Salary expectations**: The candidate's minimum salary expectation is not aligned with the offered salary, which may  ",
+//   },
+// ];
 
 const JobClarificationPage: React.FC = () => {
   const [activeJobIndex, setActiveJobIndex] = useState(0);
@@ -81,8 +68,10 @@ const JobClarificationPage: React.FC = () => {
   const [pendingSelection, setPendingSelection] = useState<"yes" | "no" | null>(
     null,
   );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [clarifyJobs, setClarifyJobs] = useState<Job[]>([]);
 
-  const currentJob = mockJobs[activeJobIndex];
+  const currentJob = clarifyJobs[activeJobIndex];
 
   const handleActionInitiation = (choice: "yes" | "no") => {
     setPendingSelection(choice);
@@ -95,15 +84,82 @@ const JobClarificationPage: React.FC = () => {
       console.log(`JOB_ID: ${currentJob.id}`);
       console.log(`COMPANY: ${currentJob.company}`);
       setShowModal(false);
-      if (activeJobIndex < mockJobs.length - 1) {
+      if (activeJobIndex < clarifyJobs.length - 1) {
         setActiveJobIndex((prev) => prev + 1);
       }
     }
   };
 
+  useEffect(() => {
+    const fetchClarifyJobs = async () => {
+      try {
+        const userId = getCookie("user_id");
+        if (!userId) {
+          showToast("User ID not found in cookies", 0);
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/jobs/${userId}/calrify`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch clarification jobs");
+        }
+
+        const data = await response.json();
+        setClarifyJobs(data.jobs || []);
+      } catch (error) {
+        console.error(error);
+        showToast("Unable to load clarification jobs", 0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClarifyJobs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col h-screen pt-[60px] items-center justify-center  bg-zinc-100  dark:bg-zinc-950 rounded-xl px-6 py-8">
+        <div className="flex flex-col items-center space-y-4">
+          {/* Simple CSS Spinner */}
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-200 border-t-primary dark:border-zinc-800" />
+          <div className="text-center">
+            <h3 className="text-base font-medium text-zinc-500 dark:text-zinc-400">
+              Loading job applications that need your clarification ...
+            </h3>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!loading && clarifyJobs.length === 0) {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-zinc-100 dark:bg-zinc-950 px-6">
+        <div className="flex flex-col items-center text-center max-w-md rounded-2xl border border-dashed border-slate-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-8 py-10 shadow-sm">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-amber-900/30">
+            <Inbox className="h-6 w-6 text-slate-600 dark:text-slate-300" />
+          </div>
+
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-zinc-200">
+            All clear 🎉
+          </h3>
+
+          <p className="mt-2 text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">
+            No jobs needing clarification right now. You’re good to go!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      <Navbar />
+      <ToastContainer />
       <div className="h-screen pt-[60px] bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-200 font-sans p-6">
         <div className="h-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
           {/* Sidebar - Scrollable */}
@@ -140,7 +196,7 @@ const JobClarificationPage: React.FC = () => {
 
             {/* Jobs List - Scrollable */}
             <div className="flex-1 overflow-y-auto p-2 space-y-2">
-              {mockJobs.map((job, index) => (
+              {clarifyJobs.map((job, index) => (
                 <button
                   key={job.id}
                   onClick={() => setActiveJobIndex(index)}
@@ -174,15 +230,33 @@ const JobClarificationPage: React.FC = () => {
           <main className="flex-1 flex flex-col min-h-0">
             {/* Clarification - Scrollable with flex-1 */}
             <div className="flex-1 min-h-0">
-              <div className="h-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg shadow-sm flex flex-col">
+              <div className="h-full pb-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-lg shadow-sm flex flex-col">
                 <div className="p-4 border-b border-slate-200 dark:border-zinc-800">
                   <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-zinc-400">
                     Job Clarification
                   </h3>
                 </div>
-                <div className="flex-1 overflow-y-auto py-1 px-2">
+                <div className="flex-1 overflow-y-auto  px-2">
+                  {/* reason */}
+                  <div className="flex flex-col p-4 mt-4 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-xl shadow-sm max-w-3xl">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0">
+                        <Info className="h-5 w-5 text-amber-600 dark:text-amber-500 mt-0.5" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-slate-700 dark:text-zinc-200 mb-1">
+                          Reason
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line">
+                          {currentJob.match_reason}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* clarification - summary , mismatches , advice */}
                   <div className="h-full p-4 bg-white dark:bg-zinc-900 dark:border-zinc-800 ">
-                    <div className="markdown-body h-full overflow-y-auto">
+                    <div className="markdown-body h-full">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[rehypeRaw]}

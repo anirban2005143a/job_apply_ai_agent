@@ -21,7 +21,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
-interface Job {
+export interface Job {
   id: string;
   title: string;
   company: string;
@@ -35,9 +35,10 @@ interface Job {
   start_date: string;
   required_skills: string[];
   description: string;
+  [key: string]: any;
 }
 
-interface AppliedJob {
+export interface AppliedJob {
   job_id: string;
   name: string;
   email: string;
@@ -154,7 +155,7 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
                 <h3 className="flex items-center gap-2 text-[10px] font-bold text-slate-500 dark:text-zinc-400 mb-2 uppercase tracking-[0.15em]">
                   <FileText className="w-3 h-3" /> Cover Letter
                 </h3>
-                <div className="p-3 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded text-[12px] text-slate-600 dark:text-zinc-400 leading-relaxed max-h-[200px] overflow-y-auto ">
+                <div className="p-3 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg text-[12px] text-slate-600 dark:text-zinc-400 leading-relaxed max-h-[200px] overflow-y-auto ">
                   <div className="markdown-body h-full overflow-y-auto">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
@@ -167,11 +168,11 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
               </section>
 
               <section
-                className="p-4 bg-slate-100/60 dark:bg-zinc-900/60 
-                    border border-slate-200 dark:border-zinc-800 rounded overflow-auto max-h-[250px] overflow-y-auto"
+                className="px-2 py-4 bg-slate-200/70 dark:bg-zinc-900/60 
+                    border border-slate-200 dark:border-zinc-800 rounded-lg overflow-auto max-h-[250px] overflow-y-auto"
               >
                 <h3
-                  className="flex items-center gap-2 
+                  className="flex items-center ml-2 gap-2 
                  text-[11px] font-bold 
                  text-slate-600 dark:text-zinc-300 
                  mb-2 uppercase tracking-[0.15em]"
@@ -181,13 +182,18 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
                 </h3>
 
                 <div
-                  className="text-sm max-w-none 
+                  className="text-sm max-w-none p-2 rounded-lg
                   text-slate-700 dark:text-zinc-200 
-                  dark:prose-invert"
+                  dark:prose-invert markdown-body"
                 >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {application.evidence_points}
-                  </ReactMarkdown>
+                  <div className="markdown-body">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                    >
+                      {application.evidence_points}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </section>
             </div>
@@ -226,8 +232,11 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
                 <div className="relative group overflow-hidden border border-slate-200 dark:border-zinc-800 rounded-sm bg-white dark:bg-zinc-950 ">
                   {/* Resume preview */}
                   <div className="p-3 text-sm font-sans text-zinc-500 dark:text-zinc-300 leading-[1.3] max-h-[380px] overflow-y-auto h-full">
-                    <div className=" max-w-none">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <div className="markdown-body max-w-none">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeRaw]}
+                      >
                         {application.resume}
                       </ReactMarkdown>
                     </div>

@@ -1,76 +1,104 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUpRight, ShieldAlert, FilterX, Layers } from "lucide-react";
+import {
+  ShieldAlert,
+  FilterX,
+  Layers,
+  Trash2,
+} from "lucide-react";
 import "react-circular-progressbar/dist/styles.css";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import Navbar from "@/components/Navbar";
+import { getCookie } from "../applied-jobs/page";
+import { showToast } from "@/lib/showToast";
+import { ToastContainer } from "react-toastify";
 
 const RejectedJobsPage = () => {
-  const rejectedJobs = [
-    {
-      id: "job_041",
-      title: "Power BI Developer",
-      company: "EY India",
-      cities: ["Kochi"],
-      countries: ["India"],
-      is_remote: true,
-      is_hybride: false,
-      salary_offered: 850000,
-      start_date: "Immediate",
-      required_skills: ["Power BI", "DAX", "SQL"],
-      match_score: 20,
-      match_reason:
-        "The candidate's primary skills are in frontend and backend development using React, Node.js, and MongoDB, but do not include Power BI or SQL, which are required for the job. The candidate's achievement in competitive programming and hackathons does not align with the job requirements. The candidate is open to relocation and has a flexible notice period, but the salary is below the candidate's minimum requirement of ₹15,000. The job location and company are not preferred by the candidate.",
-    },
-    {
-      id: "job_041",
-      title: "Power BI Developer",
-      company: "EY India",
-      cities: ["Kochi"],
-      countries: ["India"],
-      is_remote: true,
-      is_hybride: false,
-      salary_offered: 850000,
-      start_date: "Immediate",
-      required_skills: ["Power BI", "DAX", "SQL"],
-      match_score: 20,
-      match_reason:
-        "The candidate's primary skills are in frontend and backend development using React, Node.js, and MongoDB, but do not include Power BI or SQL, which are required for the job. The candidate's achievement in competitive programming and hackathons does not align with the job requirements. The candidate is open to relocation and has a flexible notice period, but the salary is below the candidate's minimum requirement of ₹15,000. The job location and company are not preferred by the candidate.",
-    },
-    {
-      id: "job_041",
-      title: "Power BI Developer",
-      company: "EY India",
-      cities: ["Kochi"],
-      countries: ["India"],
-      is_remote: true,
-      is_hybride: false,
-      salary_offered: 850000,
-      start_date: "Immediate",
-      required_skills: ["Power BI", "DAX", "SQL"],
-      match_score: 20,
-      match_reason:
-        "The candidate's primary skills are in frontend and backend development using React, Node.js, and MongoDB, but do not include Power BI or SQL, which are required for the job. The candidate's achievement in competitive programming and hackathons does not align with the job requirements. The candidate is open to relocation and has a flexible notice period, but the salary is below the candidate's minimum requirement of ₹15,000. The job location and company are not preferred by the candidate.",
-    },
-  ];
+  const [rejectedJobs, setRejectedJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRejectedJobs = async () => {
+      const userId = getCookie("user_id") as string; // read from cookie
+      if (!userId) {
+        showToast("User not logged in", 0);
+        setLoading(false);
+        return;
+      }
+
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL!;
+      const apiUrl = `${backendUrl}/jobs/${userId}/rejected`;
+
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.detail || "Failed to fetch rejected jobs");
+        }
+
+        const data = await res.json();
+        setRejectedJobs(data.jobs || []);
+      } catch (err: any) {
+        console.error(err);
+        showToast(err.message || "Failed to load rejected jobs", 0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRejectedJobs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col h-screen pt-[60px] items-center justify-center  bg-zinc-100  dark:bg-zinc-950 rounded-xl px-6 py-8">
+        <div className="flex flex-col items-center space-y-4">
+          {/* Simple CSS Spinner */}
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-200 border-t-primary dark:border-zinc-800" />
+          <div className="text-center">
+            <h3 className="text-base font-medium text-zinc-500 dark:text-zinc-400">
+              Loading pending job applications ...
+            </h3>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!loading && rejectedJobs.length === 0) {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center py-20 px-6 bg-zinc-100 dark:bg-zinc-950 rounded-xl">
+        <div className="flex flex-col items-center text-center max-w-sm rounded-2xl border border-dashed border-slate-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-8 py-10 shadow-sm">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 dark:bg-amber-900/30">
+            <Trash2 className="h-6 w-6 text-red-600 dark:text-red-500" />{" "}
+          </div>
+
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-zinc-200">
+            No Discarded Jobs
+          </h3>
+
+          <p className="mt-2 text-sm text-slate-500 dark:text-zinc-400 leading-relaxed">
+            There are currently no jobs that have been discarded. Keep an eye on
+            the queue for updates.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <Navbar />
+      <ToastContainer />
       <div className="min-h-screen pt-[80px] bg-[#fafafa] dark:bg-zinc-950 text-slate-900 dark:text-zinc-300 font-sans p-6">
         <div className="max-w-5xl mx-auto">
           {/* System Header */}
           <header className="mb-6 flex flex-col gap-4 border-b border-slate-300 dark:border-zinc-800 pb-6">
-            {/* Header */}
             <div className="flex items-center gap-3 mb-2">
               <FilterX className="w-6 h-6 text-slate-500 dark:text-zinc-400" />
               <h1 className="text-base md:text-lg font-extrabold uppercase tracking-wider text-slate-700 dark:text-zinc-300">
                 Model Exclusion Log
               </h1>
             </div>
-
-            {/* Description */}
             <p className="text-[12px] md:text-sm text-slate-500 dark:text-zinc-400 max-w-lg leading-relaxed">
               These opportunities were automatically filtered out by the
               matching engine because they didn’t meet the required
@@ -80,9 +108,19 @@ const RejectedJobsPage = () => {
 
           {/* List */}
           <div className="space-y-4">
-            {rejectedJobs.map((job) => (
-              <RejectedJobCard key={job.id} job={job} />
-            ))}
+            {loading ? (
+              <p className="text-center text-slate-500 dark:text-zinc-400 py-20">
+                Loading rejected jobs...
+              </p>
+            ) : rejectedJobs.length > 0 ? (
+              rejectedJobs.map((job) => (
+                <RejectedJobCard key={job.id} job={job} />
+              ))
+            ) : (
+              <div className="py-20 text-center border-2 border-dashed border-slate-200 dark:border-zinc-800 rounded-xl">
+                <p className="text-slate-400">No rejected jobs found.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

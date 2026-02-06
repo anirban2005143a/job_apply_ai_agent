@@ -1,9 +1,14 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File, Request 
 from fastapi import WebSocket , WebSocketDisconnect
+from fastapi.responses import JSONResponse
 from typing import List, Optional
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from filelock import FileLock
 
+import json
+import asyncio
+import time
 import os
 import jwt
 import bcrypt
@@ -17,6 +22,7 @@ from data_types import RegisterRequest , LoginRequest
 from jwt_token import create_token, verify_jwt_token
 from auth_handle import login_user , register_user
 from websocker_handle import websocket_manager
+from job_manager import job_manager
 
 # WebSocket manager for live job updates
 from fastapi import WebSocket, WebSocketDisconnect
@@ -113,6 +119,128 @@ async def verify_token(request: Request):
     return {"valid": True, "user_id": payload.get("user_id")}
     
 
+@app.get("/jobs/{user_id}/applied")
+def get_applied_jobs(user_id: str):
+    """
+    Reads {user_id}/applied_jobs.json with a lock and returns the jobs.
+    """
+    jobs_file = os.path.join(user_id, "applied_jobs.json")
+    lock_file = jobs_file + ".lock"  # create a lock file alongside the JSON
+
+    if not os.path.exists(jobs_file):
+        return {"jobs": []}
+
+    try:
+        with FileLock(lock_file):
+            with open(jobs_file, "r") as f:
+                try:
+                    jobs = json.load(f)
+                except json.JSONDecodeError:
+                    jobs = []  # empty or invalid file -> treat as empty list
+
+        return {"jobs": jobs}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/jobs/{user_id}/rejected")
+def get_rejected_jobs(user_id: str):
+    """
+    Reads {user_id}/rejected_jobs.json with a lock and returns the jobs.
+    """
+    jobs_file = os.path.join(user_id, "rejected_jobs.json")
+    lock_file = jobs_file + ".lock"
+
+    if not os.path.exists(jobs_file):
+        return {"jobs": []}
+
+    try:
+        with FileLock(lock_file):
+            with open(jobs_file, "r") as f:
+                try:
+                    jobs = json.load(f)
+                except json.JSONDecodeError:
+                    jobs = []  # empty or invalid file -> treat as empty list
+
+        return {"jobs": jobs}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/jobs/{user_id}/pending")
+def get_rejected_jobs(user_id: str):
+    """
+    Reads {user_id}/pending_jobs.json with a lock and returns the jobs.
+    """
+    jobs_file = os.path.join(user_id, "pending_jobs.json")
+    lock_file = jobs_file + ".lock"
+
+    if not os.path.exists(jobs_file):
+        return {"jobs": []}
+
+    try:
+        with FileLock(lock_file):
+            with open(jobs_file, "r") as f:
+                try:
+                    jobs = json.load(f)
+                except json.JSONDecodeError:
+                    jobs = []  # empty or invalid file -> treat as empty list
+
+        return {"jobs": jobs}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/jobs/{user_id}/calrify")
+def get_rejected_jobs(user_id: str):
+    """
+    Reads {user_id}/clarify_jobs.json with a lock and returns the jobs.
+    """
+    jobs_file = os.path.join(user_id, "clarify_jobs.json")
+    lock_file = jobs_file + ".lock"
+
+    if not os.path.exists(jobs_file):
+        return {"jobs": []}
+
+    try:
+        with FileLock(lock_file):
+            with open(jobs_file, "r") as f:
+                try:
+                    jobs = json.load(f)
+                except json.JSONDecodeError:
+                    jobs = []  # empty or invalid file -> treat as empty list
+
+        return {"jobs": jobs}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/user/{user_id}/start")
+def start_user(user_id: str):
+    """
+    Start processing jobs for a user.
+    """
+    try:
+        job_manager.start_user(user_id)
+        return {"status": "success", "message": f"User {user_id} started."}
+    except Exception as e:
+        print("Error in user start api" , e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/user/{user_id}/stop")
+def stop_user(user_id: str):
+    """
+    Stop processing jobs for a user.
+    """
+    try:
+        job_manager.stop_user(user_id)
+        return {"status": "success", "message": f"User {user_id} stopped."}
+    except Exception as e:
+        print("Error in user stop api" , e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.websocket("/ws/{user_id}")
 async def websocket_connection(websocket: WebSocket, user_id: str):
     await websocket_manager.connect(user_id, websocket)
@@ -120,14 +248,12 @@ async def websocket_connection(websocket: WebSocket, user_id: str):
     try:
         while True:
             data = await websocket.receive_text()
-            # Send personal message back to the same user
-            await websocket_manager.send_personal_message(
-                user_id=user_id,
-                data={"message": f"You sent: {data}"}
-            )
+            print("Recieve from user" , user_id , "data" , data)
+            
     except WebSocketDisconnect:
         websocket_manager.disconnect(user_id)
 
 
 if __name__ == "__main__":
+    
     uvicorn.run("server:app", host="0.0.0.0", port=int(os.getenv('PORT', 8000)), reload=True)

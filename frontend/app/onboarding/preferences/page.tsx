@@ -18,8 +18,8 @@ import cities from "cities-list";
 import { debounce } from "lodash";
 import ISO6391 from "iso-639-1";
 import { showToast } from "@/lib/showToast";
-import { removeEmptyItemsRecursively } from "@/lib/updatePriorities";
 import { ToastContainer } from "react-toastify";
+import { getSelectStyles } from "@/hooks/SelectStyles";
 
 const languageOptions = ISO6391.getAllNames().map((name) => ({
   value: name.toLowerCase(),
@@ -68,6 +68,7 @@ const languageProficiencyOptions = [
 ];
 
 const animatedComponents = makeAnimated();
+const isDark = false;
 
 /**
  * REVISED: Debounced Input Component
@@ -228,7 +229,7 @@ const MemoizedLanguageSelect = memo(
               value={item.language}
               onChange={(val: any) => handleItemChange(idx, "language", val)}
               placeholder="Select language"
-              styles={customSelectStyles}
+              styles={getSelectStyles(isDark)}
               className="flex-1"
             />
             <Select
@@ -236,7 +237,7 @@ const MemoizedLanguageSelect = memo(
               value={item.proficiency}
               onChange={(val: any) => handleItemChange(idx, "proficiency", val)}
               placeholder="Select proficiency"
-              styles={customSelectStyles}
+              styles={getSelectStyles(isDark)}
               className="flex-1"
             />
             <button
@@ -333,7 +334,7 @@ const JobConstraintsFormContent = memo(
                 onChange={(option: any) =>
                   handleSelectChange("hasVisa", option)
                 }
-                styles={customSelectStyles}
+                styles={getSelectStyles(isDark)}
                 menuPortalTarget={
                   typeof window !== "undefined" ? document.body : undefined
                 }
@@ -371,7 +372,7 @@ const JobConstraintsFormContent = memo(
                     isMulti
                     cacheOptions
                     placeholder="Type to search countries..."
-                    styles={customSelectStyles}
+                    styles={getSelectStyles(isDark)}
                     menuPortalTarget={
                       typeof window !== "undefined" ? document.body : undefined
                     }
@@ -400,7 +401,7 @@ const JobConstraintsFormContent = memo(
                   }
                   placeholder="How soon can you start?"
                   isClearable
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
@@ -453,7 +454,7 @@ const JobConstraintsFormContent = memo(
                   }
                   placeholder="Are you willing to relocate?"
                   isClearable
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
@@ -479,7 +480,7 @@ const JobConstraintsFormContent = memo(
                   }
                   placeholder="Select status"
                   isClearable
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
@@ -512,7 +513,7 @@ const JobConstraintsFormContent = memo(
                   onChange={(opt: any) =>
                     handleSelectChange("workAuthorizationInCurrentCountry", opt)
                   }
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
@@ -538,7 +539,7 @@ const JobConstraintsFormContent = memo(
                   }
                   placeholder="Will you require sponsorship?"
                   isClearable
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
                   }
@@ -589,7 +590,7 @@ const JobConstraintsFormContent = memo(
                 placeholder="Select work mode(s)..."
                 isMulti
                 closeMenuOnSelect={false}
-                styles={customSelectStyles}
+                styles={getSelectStyles(isDark)}
                 menuPortalTarget={
                   typeof window !== "undefined" ? document.body : undefined
                 }
@@ -613,7 +614,7 @@ const JobConstraintsFormContent = memo(
                   isMulti
                   loadOptions={loadCityOptions}
                   defaultOptions={defaultCityOptions}
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   cacheOptions
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
@@ -635,7 +636,7 @@ const JobConstraintsFormContent = memo(
                   isMulti
                   loadOptions={loadCountryOptions}
                   defaultOptions={defaultCountryOptions}
-                  styles={customSelectStyles}
+                  styles={getSelectStyles(isDark)}
                   cacheOptions
                   menuPortalTarget={
                     typeof window !== "undefined" ? document.body : undefined
@@ -790,7 +791,7 @@ export default function PreferencesPage() {
     return prev;
   }, [form]);
 
-  const preProcessTheForm = useCallback((obj:any) => {
+  const preProcessTheForm = useCallback((obj: any) => {
     obj["visaCountries"] = obj["visaCountries"].map((el: any) => ({
       value: el,
       label: el,
@@ -889,7 +890,8 @@ export default function PreferencesPage() {
     }
   }, []);
 
-  if (loading) {return (
+  if (loading) {
+    return (
       <div className="flex flex-col items-center justify-center  bg-zinc-100  dark:bg-zinc-950 rounded-xl px-6 py-8">
         <div className="flex flex-col items-center space-y-4">
           {/* Simple CSS Spinner */}
@@ -904,7 +906,7 @@ export default function PreferencesPage() {
           </div>
         </div>
       </div>
-    ); <div className="p-8">Loading preferences…</div>;
+    );
   }
 
   const currentCountry =
@@ -937,4 +939,21 @@ export default function PreferencesPage() {
       />
     </>
   );
+}
+
+export function useSystemTheme() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    setIsDark(media.matches);
+
+    const listener = (e: MediaQueryListEvent) => setIsDark(e.matches);
+    media.addEventListener("change", listener);
+
+    return () => media.removeEventListener("change", listener);
+  }, []);
+
+  return isDark;
 }

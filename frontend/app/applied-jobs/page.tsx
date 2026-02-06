@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Briefcase, Filter, Search } from "lucide-react";
-import AppliedJobCard from "./AppliedJobCard";
+import AppliedJobCard, { AppliedJob } from "./AppliedJobCard";
 import { Footer } from "@/components/landing/footer";
 import Navbar from "@/components/Navbar";
+import { showToast } from "@/lib/showToast";
+import { ToastContainer } from "react-toastify";
 
 // This matches the structure of the JSON you provided
 const MOCK_APPLICATIONS = [
@@ -118,10 +120,54 @@ const MOCK_APPLICATIONS = [
   },
 ];
 
+// Utility function to get a cookie by name
+export const getCookie = (name: string): string | null => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()!.split(";").shift() || null;
+  return null;
+};
 const AppliedJobsPage = () => {
+  const [applications, setApplications] = useState<AppliedJob[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      const userId = getCookie("user_id");
+      if (!userId) {
+        showToast("User ID not found in cookies", 0);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/jobs/${userId}/applied`,
+        );
+        const data = await res.json();
+
+        console.log(data);
+
+        if (!res.ok) {
+          // FastAPI sends detail in data.detail
+          throw new Error(data.detail || "Failed to fetch applied jobs");
+        }
+
+        setApplications(data.jobs || []);
+      } catch (err: any) {
+        console.error(err);
+        showToast(err.message || "Failed to load applications", 0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
   return (
     <>
-      <Navbar />
+      <ToastContainer />
       <div className="min-h-screen pt-[40px] bg-slate-50 dark:bg-zinc-950 transition-colors duration-300">
         <main className="max-w-6xl mx-auto px-6 py-10">
           {/* Page Header */}
@@ -132,16 +178,20 @@ const AppliedJobsPage = () => {
             <p className="text-slate-500 dark:text-zinc-400 mt-2">
               You have submitted{" "}
               <span className="font-semibold text-slate-900 dark:text-zinc-200">
-                {MOCK_APPLICATIONS.length}
+                {applications.length}
               </span>{" "}
-              applications .
+              applications.
             </p>
           </div>
 
           {/* List of Applications */}
           <div className="grid grid-cols-1 gap-6">
-            {MOCK_APPLICATIONS.length > 0 ? (
-              MOCK_APPLICATIONS.map((app) => (
+            {loading ? (
+              <p className="text-center text-slate-500 dark:text-zinc-400">
+                Loading applications...
+              </p>
+            ) : applications.length > 0 ? (
+              applications.map((app) => (
                 <AppliedJobCard key={app.job_id} application={app} />
               ))
             ) : (

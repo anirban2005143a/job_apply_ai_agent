@@ -10,7 +10,7 @@ from document_loader.parser import _clean_model_response
 
 load_dotenv()
 
-db.connect_to_db()
+# db.connect_to_db()
 
 # prompts  
 JOB_QUERY_PROMPT = ChatPromptTemplate.from_messages([
@@ -65,7 +65,8 @@ RESUME_PROMPT = ChatPromptTemplate.from_messages([
         "technical requirements of the job. Briefly explain their relevance.\n"
         "4. Ensure all technical skills required by the job that the user possesses are prominently listed.\n"
         "5. Highlight elite credentials like 'IIT' and 'AIR' ranks (e.g., WBJEE AIR 235).\n"
-        "6. Output ONLY the resume in Markdown format. No conversational text."
+        "6. DO NOT fabricate, infer, or add any information that is not explicitly present in the user data.\n"
+        "7. Output ONLY the resume in Markdown format. No conversational text."
     )),
     ("user", "### USER PROFILE:\n{user_json}\n\n### JOB DESCRIPTION:\n{job_json}")
 ])
@@ -149,13 +150,12 @@ llm = HuggingFaceEndpoint(
 model = ChatHuggingFace(llm = llm)
 
 
-def generate_query_for_job_search(user_id):
-    if not user_id:
-        raise Exception("User id is required")
+def generate_query_for_job_search(user_data = None):
+    if user_data is None:
+        raise Exception("User_data is required")
     
-    user = db.get_user_profile(user_id)
     # The LLM needs a string representation of the JSON
-    user_json_str = json.dumps(user)
+    user_json_str = json.dumps(user_data)
 
     print("Invoke chain")
 
@@ -168,9 +168,49 @@ def generate_query_for_job_search(user_id):
     return query_string.strip()
 
 
-def separate_and_rank_jobs(user:User , jobs:list):
-    if len(jobs)==0 :
+def generate_clarification(user:User , job:dict , user_data=None):
+    if not user_data:
+        raise Exception("user data is required")
+
+    print(f"Generating clarification for: {user.user_id}" , job.get("company"))
+
+    # 1. Prepare User Data 
+    # The LLM needs a string representation of the JSON
+    user_json = json.dumps(user_data)
+    job_json = json.dumps(job)
+
+    print("Calling chain")
+    # 2. Initialize the Chain
+    # Assuming 'model' is your ChatHuggingFace(llm=llm) instance
+    chain = CLARIFICATION_PROMPT | model
+
+    # 3. Invoke LLM
+    try:
+        response = chain.invoke({
+            "user_json": user_json,
+            "job_json": job_json
+        })
+        
+        # 4. Extract Content
+        # result.content contains the raw Markdown text
+        clarification_markdown = response.content if hasattr(response, 'content') else str(response)
+        
+        print("created clarification for ", job.get("company"))
+
+        return clarification_markdown.strip()
+
+    except Exception as e:
+        print(f"Error generating clarification points: {e}")
+        raise Exception("Failed to generate clarification points. Please check your LLM connection.")
+
+
+def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
+    if len(jobs)==0 or user_data is None:
         return []
+    
+    if not user.is_active:
+        print("User is not active")
+        return
 
     user_id = str(user.user_id)
     user_dir = f"./{user_id}"
@@ -182,9 +222,6 @@ def separate_and_rank_jobs(user:User , jobs:list):
     rejected_list = []
     clarify_list = []
 
-    print("Getting user data")
-    # Prepare User data for LLM (removing password for safety)
-    user_data = db.get_user_profile(user_id)
     # The LLM needs a string representation of the JSON
     user_json = json.dumps(user_data)
 
@@ -192,6 +229,10 @@ def separate_and_rank_jobs(user:User , jobs:list):
     chain = SCORING_PROMPT | model
 
     for job in jobs:
+        if not user.is_active:
+            print("User is not active")
+            return
+
         # Generate Score using LLM
         job_json = json.dumps(job)
         print("process job " , job["id"])
@@ -231,6 +272,9 @@ def separate_and_rank_jobs(user:User , jobs:list):
         with open(path, 'w') as f:
             json.dump(current_data, f, indent=4)
 
+    if not user.is_active:
+        print("User is not active")
+        return
     if rejected_list: append_to_file('rejected_jobs.json', rejected_list)
     if clarify_list: append_to_file('clarify_jobs.json', clarify_list)
 
@@ -244,7 +288,11 @@ def generate_resume(user:User , job:dict , user_data=None):
     if not user_data:
         raise Exception("user data is required")
 
-    print(f"Generating tailored resume for: {user.user_id}")
+    if not user.is_active:
+        print("User is not active")
+        return
+
+    print(f"Generating tailored resume for: {user.user_id}" , job.get("company"))
 
     # 1. Prepare User Data 
     # The LLM needs a string representation of the JSON
@@ -267,6 +315,7 @@ def generate_resume(user:User , job:dict , user_data=None):
         # result.content contains the raw Markdown text
         resume_markdown = response.content if hasattr(response, 'content') else str(response)
         
+        print("created resume for ", job.get("company"))
         return resume_markdown.strip()
 
     except Exception as e:
@@ -278,7 +327,11 @@ def generate_cover_letter(user:User , job:dict , user_data=None):
     if not user_data:
         raise Exception("user data is required")
 
-    print(f"Generating cover letter for: {user.user_id}")
+    if not user.is_active:
+        print("User is not active")
+        return
+
+    print(f"Generating cover letter for: {user.user_id}" , job.get("company"))
 
     # 1. Prepare User Data 
     # The LLM needs a string representation of the JSON
@@ -301,6 +354,8 @@ def generate_cover_letter(user:User , job:dict , user_data=None):
         # result.content contains the raw Markdown text
         cover_letter_markdown = response.content if hasattr(response, 'content') else str(response)
         
+        print("cover letter for ", job.get("company"))
+
         return cover_letter_markdown.strip()
 
     except Exception as e:
@@ -312,7 +367,11 @@ def generate_evidence_points(user:User , job:dict , user_data=None):
     if not user_data:
         raise Exception("user data is required")
 
-    print(f"Generating evidence points for: {user.user_id}")
+    if not user.is_active:
+        print("User is not active")
+        return
+        
+    print(f"Generating evidence points for: {user.user_id}" , job.get("company"))
 
     # 1. Prepare User Data 
     # The LLM needs a string representation of the JSON
@@ -335,6 +394,7 @@ def generate_evidence_points(user:User , job:dict , user_data=None):
         # result.content contains the raw Markdown text
         evidence_points_markdown = response.content if hasattr(response, 'content') else str(response)
         
+        print("created evidence for ", job.get("company"))
         return evidence_points_markdown.strip()
 
     except Exception as e:
@@ -342,140 +402,109 @@ def generate_evidence_points(user:User , job:dict , user_data=None):
         raise Exception("Failed to generate evidence points. Please check your LLM connection.")
 
 
-def generate_clarification(user:User , job:dict , user_data=None):
-    if not user_data:
-        raise Exception("user data is required")
+if __name__ == "__main__":
 
-    print(f"Generating clarification for: {user.user_id}")
+    user_id = "69834eb4f44210db096c223c"
+    # query = generate_query_for_job_search(user_id)
 
-    # 1. Prepare User Data 
-    # The LLM needs a string representation of the JSON
-    user_json = json.dumps(user_data)
-    job_json = json.dumps(job)
+    # print(query)
+    user = User(user_id)
+    # jobs = [
+    #     {
+    #     "id": "job_041",
+    #     "title": "Power BI Developer",
+    #     "company": "EY India",
+    #     "cities": ["Kochi"],
+    #     "countries": ["India"],
+    #     "is_remote": True,
+    #     "is_hybride": False,
+    #     "is_onsite": False,
+    #     "salary_offered": 850000,
+    #     "visa_sponsorship_offered": False,
+    #     "start_date": "Immediate",
+    #     "required_skills": ["Power BI", "DAX", "SQL"],
+    #     "description": "Building dashboards and reports."
+    #   },
+    #   {
+    #     "id": "job_045",
+    #     "title": "SAP ABAP Developer",
+    #     "company": "Birlasoft",
+    #     "cities": ["Nagpur"],
+    #     "countries": ["India"],
+    #     "is_remote": False,
+    #     "is_hybride": False,
+    #     "is_onsite": True,
+    #     "salary_offered": 1100000,
+    #     "visa_sponsorship_offered": False,
+    #     "start_date": "Within 1 month",
+    #     "required_skills": ["SAP ABAP", "Reports", "Enhancements"],
+    #     "description": "Custom SAP development."
+    #   },
+    #   {
+    #     "id": "job_046",
+    #     "title": "Technical Program Manager",
+    #     "company": "Intel India",
+    #     "cities": ["Bengaluru"],
+    #     "countries": ["India"],
+    #     "is_remote": False,
+    #     "is_hybride": True,
+    #     "is_onsite": False,
+    #     "salary_offered": 2400000,
+    #     "visa_sponsorship_offered": False,
+    #     "start_date": "Within 2 months",
+    #     "required_skills": ["Program Management", "Agile", "Coordination"],
+    #     "description": "Managing large technical programs."
+    #   },
+    #   {
+    #     "id": "job_002",
+    #     "title": "Frontend Developer",
+    #     "company": "Infosys",
+    #     "cities": ["Pune"],
+    #     "countries": ["India"],
+    #     "is_remote": True,
+    #     "is_hybride": False,
+    #     "is_onsite": False,
+    #     "salary_offered": 900000,
+    #     "visa_sponsorship_offered": False,
+    #     "start_date": "Immediate",
+    #     "required_skills": ["React", "TypeScript", "HTML", "CSS"],
+    #     "description": "Building responsive and scalable frontend applications."
+    #   },
+    #   {
+    #     "id": "job_005",
+    #     "title": "Cloud Engineer",
+    #     "company": "HCL",
+    #     "cities": ["Noida"],
+    #     "countries": ["India"],
+    #     "is_remote": False,
+    #     "is_hybride": True,
+    #     "is_onsite": False,
+    #     "salary_offered": 1100000,
+    #     "visa_sponsorship_offered": False,
+    #     "start_date": "Within 1 month",
+    #     "required_skills": ["AWS", "Azure", "Terraform"],
+    #     "description": "Designing and maintaining cloud infrastructure."
+    #   },
+    # ]
+    user_data = db.get_user_profile(user_id=user_id)
 
-    print("Calling chain")
-    # 2. Initialize the Chain
-    # Assuming 'model' is your ChatHuggingFace(llm=llm) instance
-    chain = CLARIFICATION_PROMPT | model
+    # applied_jobs = separate_and_rank_jobs(user , jobs)
+    # print("Confirmed jobs" , applied_jobs)
 
-    # 3. Invoke LLM
-    try:
-        response = chain.invoke({
-            "user_json": user_json,
-            "job_json": job_json
-        })
-        
-        # 4. Extract Content
-        # result.content contains the raw Markdown text
-        clarification_markdown = response.content if hasattr(response, 'content') else str(response)
-        
-        return clarification_markdown.strip()
+    job = {
+        "id": "job_001",
+        "title": "DevOps Engineer",
+        "company": "TechMahindra",
+        "cities": ["Bengaluru"],
+        "countries": ["India"],
+        "is_remote": False,
+        "is_hybride": True,
+        "is_onsite": False,
+        "salary_offered": 1200000,
+        "visa_sponsorship_offered": False,
+        "start_date": "Within 1 month",
+        "required_skills": ["AWS", "Docker", "CI/CD"],
+        "description": "Managing cloud infrastructure and deployment pipelines."
+    }
 
-    except Exception as e:
-        print(f"Error generating clarification points: {e}")
-        raise Exception("Failed to generate clarification points. Please check your LLM connection.")
-
-user_id = "69834eb4f44210db096c223c"
-# query = generate_query_for_job_search(user_id)
-
-# print(query)
-user = User(user_id)
-# jobs = [
-#     {
-#     "id": "job_041",
-#     "title": "Power BI Developer",
-#     "company": "EY India",
-#     "cities": ["Kochi"],
-#     "countries": ["India"],
-#     "is_remote": True,
-#     "is_hybride": False,
-#     "is_onsite": False,
-#     "salary_offered": 850000,
-#     "visa_sponsorship_offered": False,
-#     "start_date": "Immediate",
-#     "required_skills": ["Power BI", "DAX", "SQL"],
-#     "description": "Building dashboards and reports."
-#   },
-#   {
-#     "id": "job_045",
-#     "title": "SAP ABAP Developer",
-#     "company": "Birlasoft",
-#     "cities": ["Nagpur"],
-#     "countries": ["India"],
-#     "is_remote": False,
-#     "is_hybride": False,
-#     "is_onsite": True,
-#     "salary_offered": 1100000,
-#     "visa_sponsorship_offered": False,
-#     "start_date": "Within 1 month",
-#     "required_skills": ["SAP ABAP", "Reports", "Enhancements"],
-#     "description": "Custom SAP development."
-#   },
-#   {
-#     "id": "job_046",
-#     "title": "Technical Program Manager",
-#     "company": "Intel India",
-#     "cities": ["Bengaluru"],
-#     "countries": ["India"],
-#     "is_remote": False,
-#     "is_hybride": True,
-#     "is_onsite": False,
-#     "salary_offered": 2400000,
-#     "visa_sponsorship_offered": False,
-#     "start_date": "Within 2 months",
-#     "required_skills": ["Program Management", "Agile", "Coordination"],
-#     "description": "Managing large technical programs."
-#   },
-#   {
-#     "id": "job_002",
-#     "title": "Frontend Developer",
-#     "company": "Infosys",
-#     "cities": ["Pune"],
-#     "countries": ["India"],
-#     "is_remote": True,
-#     "is_hybride": False,
-#     "is_onsite": False,
-#     "salary_offered": 900000,
-#     "visa_sponsorship_offered": False,
-#     "start_date": "Immediate",
-#     "required_skills": ["React", "TypeScript", "HTML", "CSS"],
-#     "description": "Building responsive and scalable frontend applications."
-#   },
-#   {
-#     "id": "job_005",
-#     "title": "Cloud Engineer",
-#     "company": "HCL",
-#     "cities": ["Noida"],
-#     "countries": ["India"],
-#     "is_remote": False,
-#     "is_hybride": True,
-#     "is_onsite": False,
-#     "salary_offered": 1100000,
-#     "visa_sponsorship_offered": False,
-#     "start_date": "Within 1 month",
-#     "required_skills": ["AWS", "Azure", "Terraform"],
-#     "description": "Designing and maintaining cloud infrastructure."
-#   },
-# ]
-user_data = db.get_user_profile(user_id=user_id)
-
-# applied_jobs = separate_and_rank_jobs(user , jobs)
-# print("Confirmed jobs" , applied_jobs)
-
-job = {
-    "id": "job_001",
-    "title": "DevOps Engineer",
-    "company": "TechMahindra",
-    "cities": ["Bengaluru"],
-    "countries": ["India"],
-    "is_remote": False,
-    "is_hybride": True,
-    "is_onsite": False,
-    "salary_offered": 1200000,
-    "visa_sponsorship_offered": False,
-    "start_date": "Within 1 month",
-    "required_skills": ["AWS", "Docker", "CI/CD"],
-    "description": "Managing cloud infrastructure and deployment pipelines."
-}
-
-print(generate_clarification(user , job , user_data))
+    print(generate_clarification(user , job , user_data))

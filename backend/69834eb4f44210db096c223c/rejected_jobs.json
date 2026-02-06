@@ -1,0 +1,53 @@
+[
+    {
+        "id": "job_201",
+        "title": "Mechanical Design Engineer",
+        "company": "Larsen & Toubro",
+        "cities": [
+            "Chennai"
+        ],
+        "countries": [
+            "India"
+        ],
+        "is_remote": false,
+        "is_hybride": false,
+        "is_onsite": true,
+        "salary_offered": 600000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Within 1 month",
+        "required_skills": [
+            "AutoCAD",
+            "SolidWorks",
+            "Thermodynamics"
+        ],
+        "description": "Design mechanical components and systems.",
+        "match_score": 25,
+        "match_reason": "The candidate is a software developer with front-end, back-end, and data science experience, but the job requires a Mechanical Design Engineer with skills in AutoCAD, SolidWorks, and Thermodynamics. The job does not match the candidate's job experience, skills, or company preferences. The job is not remote, which doesn't match the candidate's work mode preference. The salary offered is higher than the candidate's minimum salary requirement, but the job does not align with the candidate's technical expertise."
+    },
+    {
+        "id": "job_402",
+        "title": "DevOps Engineer",
+        "company": "Tech Mahindra",
+        "cities": [
+            "Pune"
+        ],
+        "countries": [
+            "India"
+        ],
+        "is_remote": false,
+        "is_hybride": true,
+        "is_onsite": false,
+        "salary_offered": 1400000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Within 2 months",
+        "required_skills": [
+            "AWS",
+            "CI/CD",
+            "Linux",
+            "Kubernetes"
+        ],
+        "description": "Manage deployment pipelines and cloud infrastructure.",
+        "match_score": 0,
+        "match_reason": "The candidate's technical skills and experience do not align with the job's required skills. They lack DevOps-related experience and skills such as AWS, CI/CD, Linux, and Kubernetes. Additionally, the candidate's preferred work mode includes 'Remote', which conflicts with the job's 'is_remote' setting to 'false', and they would not be able to relocate to Pune immediately, which is in line with the 'noticePeriod' of 'immediately' set by the candidate."
+    }
+]

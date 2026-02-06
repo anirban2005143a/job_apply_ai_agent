@@ -50,6 +50,7 @@ export function OnboardingProvider({
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("onboardingState");
+      console.log("raw" , raw)
       if (raw) {
         const parsed = JSON.parse(raw);
         console.log(parsed)
@@ -69,6 +70,8 @@ export function OnboardingProvider({
       }
     } catch (e) {
       // ignore
+      setUserDataState(null)
+      setUserPreferenceState(null)
     }
   }, []);
 
@@ -91,6 +94,7 @@ export function OnboardingProvider({
         userData: userData ? removeEmptyItemsRecursively(stripInternal(userData)) : userData,
         userPreference: userPreference ? removeEmptyItemsRecursively(stripInternal(userPreference)) : userPreference,
       };
+      console.log("payload" , payload)
       sessionStorage.setItem("onboardingState", JSON.stringify(payload));
     } catch (err) {
       console.warn("Failed to save onboardingState", err);

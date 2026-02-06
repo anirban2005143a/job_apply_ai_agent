@@ -182,6 +182,7 @@ async def apply_job(payload: ApplyRequest):
         else:
             append_json(PENDING_FILE, record)
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Failed to store decision: {e}")
 
     return ApplyResponse(application_id=application_id, status="pending")

@@ -47,21 +47,34 @@ export function NotificationMenu({ userId }: { userId: string | null }) {
 
   const playNotificationSound = () => {
     try {
-      const AudioCtxCtor: any =
-        (window as any).AudioContext || (window as any).webkitAudioContext;
+      const AudioCtxCtor = window.AudioContext;
       if (!AudioCtxCtor) return;
+
       if (!audioCtxRef.current) audioCtxRef.current = new AudioCtxCtor();
-      const ctx = audioCtxRef.current as AudioContext;
+      const ctx = audioCtxRef.current;
+
+      // Resume context if it's suspended (browsers often block auto-audio)
+      if (ctx.state === "suspended") ctx.resume();
+
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+
       osc.type = "sine";
       osc.frequency.setValueAtTime(880, ctx.currentTime);
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+
+      // START: Initial volume (increased slightly from 0.0001)
+      gain.gain.setValueAtTime(0.001, ctx.currentTime);
+
+      // PEAK: Increased from 0.08 to 0.3 for a "bit" more volume
+      gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+
       osc.connect(gain);
       gain.connect(ctx.destination);
-      gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+
       osc.start();
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+
+      // DECAY: Return to near-silent
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
       osc.stop(ctx.currentTime + 0.3);
     } catch (e) {
       console.error("playNotificationSound failed", e);
@@ -88,7 +101,12 @@ export function NotificationMenu({ userId }: { userId: string | null }) {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       setNotifications((prev) => [
-        { id: Date.now(), type: data.type, message: data.message },
+        {
+          id: Date.now(),
+          type: data.type,
+          message: data.message,
+          job_id: data.job_id,
+        },
         ...prev,
       ]);
       setHasUnread(true);
@@ -109,7 +127,6 @@ export function NotificationMenu({ userId }: { userId: string | null }) {
       setHasUnread(false);
     }
   }, [isOpen, hasUnread]);
-
 
   const getTypeStyles = (type: Notification["type"]) => {
     switch (type) {
@@ -154,6 +171,8 @@ export function NotificationMenu({ userId }: { userId: string | null }) {
     document.addEventListener("click", onDocClick);
     return () => document.removeEventListener("click", onDocClick);
   }, []);
+
+  console.log(notifications);
 
   return (
     <div className="relative" ref={menuRef}>

@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Terminal } from "lucide-react";
+import { Terminal } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function Hero() {
+  const router = useRouter()
+
   return (
     <section className="relative border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#050505] pt-24 pb-0 md:pt-36 transition-colors duration-300">
       {/* Structural Grid Detail */}
@@ -35,10 +38,14 @@ export function Hero() {
             <a href="/apply" className="w-full sm:w-auto">
               <Button 
                 size="lg" 
+                onClick={(e)=>{
+                  e.preventDefault()
+                  router.push("/dashboard")
+                }}
                 className="h-12 cursor-pointer w-full rounded-none border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 px-8 text-[11px] font-bold uppercase tracking-widest text-zinc-50 dark:text-black transition-all hover:bg-transparent hover:text-zinc-900 dark:hover:text-zinc-100 sm:w-auto"
               >
                 <Terminal className="mr-2 h-3.5 w-3.5" />
-                State Apply to Jobs
+                Start Apply to Jobs
               </Button>
             </a>
             <Button 
@@ -52,7 +59,7 @@ export function Hero() {
         </div>
 
         {/* Stats Section - Multi-mode Adaptable */}
-        <div className="grid grid-cols-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950/50 md:grid-cols-4">
+        {/* <div className="grid grid-cols-2 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950/50 md:grid-cols-4">
           {[
             { value: "12.4k", label: "Nodes Processed" },
             { value: "100%", label: "Fact Grounding" },
@@ -71,7 +78,7 @@ export function Hero() {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </section>
   );

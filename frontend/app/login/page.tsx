@@ -76,10 +76,10 @@ export default function LoginPage() {
       const redirectTo = searchParams.get("from") || "/";
       console.log(redirectTo);
 
-      router.refresh(); // Force middleware to re-evaluate
+      // router.refresh(); // Force middleware to re-evaluate
 
       setTimeout(() => {
-        router.push(redirectTo);
+        window.location.href = redirectTo;
       }, 500);
     } catch (err: any) {
       showToast("Logging failed. Please try again.", 0);

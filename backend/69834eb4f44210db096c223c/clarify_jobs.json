@@ -1,29 +1,56 @@
 [
     {
-        "id": "job_401",
-        "title": "QA Automation Engineer",
-        "company": "Wipro",
+        "id": "job_high_03",
+        "title": "Software Development Engineer (SDE-1)",
+        "company": "Razorpay",
         "cities": [
-            "Bangalore"
+            "Mumbai"
+        ],
+        "countries": [
+            "India"
+        ],
+        "is_remote": true,
+        "is_hybride": false,
+        "is_onsite": false,
+        "salary_offered": 1800000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Immediate",
+        "required_skills": [
+            "C++",
+            "JavaScript",
+            "Express.js",
+            "PostgreSQL"
+        ],
+        "description": "Developing robust fintech solutions with a focus on low-latency backend systems.",
+        "match_score": 70,
+        "match_reason": "Candidate has a strong background in competitive programming and relevant skills for the SDE-1 role, but lacks direct experience in PostgreSQL and has some requirements that do not match the job, such as relocation openness to Japan and not being immediately available to join.",
+        "clarification": "## JOB MISSION & DOMAIN\nThe role of a Software Development Engineer (SDE-1) at Razorpay involves developing robust fintech solutions with a focus on low-latency backend systems. This requires proficiency in languages such as C++, JavaScript, and relevant frameworks like Express.js. PostgreSQL is also a crucial requirement for this role. As a fintech company, Razorpay operates in a fast-paced technical environment where scalability and efficiency are top priorities.\n\n### COMPATIBILITY INDEX: 35% | High Risk\nThe candidate's application has various technical and non-technical gaps that significantly reduce their compatibility for the Software Development Engineer (SDE-1) role at Razorpay.\n\n### TECHNICAL DELTA\n\n| Requirement | Candidate Status | Gap Severity |\n|-------------|------------------|---------------|\n| C++          | Present           | Low            |\n| JavaScript  | Present           | Low            |\n| Express.js   | Present           | Low            |\n| PostgreSQL   | Not mentioned     | High           |\n|             |                   |                |\n\n### STRATEGIC MISMATCHES\n- Location: The candidate is open to relocating to Japan, which does not match the job's requirements.\n- Salary: The candidate's minimum salary requirement of 15000 is far below the offered salary of 1800000.\n- Visa: The candidate does not have a valid visa, and the company does not offer visa sponsorship.\n\n### SYSTEM ADVISORY\nHard Truths:\n\n* The candidate lacks direct experience with PostgreSQL, a critical requirement for this role.\n* There are significant gaps in the candidate's relocation openness and availability.\n* The candidate's salary requirement does not align with the offered compensation.\n* The non-existence of a valid visa and lack of sponsorship requirement are deal-breakers for this position.\nTo move forward with Anirban Das's application, Razorpay should:\n\n* Assess the potential for the candidate to acquire PostgreSQL skills on the job.\n* Negotiate relocation to a country that accommodates the candidate's openness.\n* Consider whether the candidate's salary requirements can be adjusted to match the company's offerings.\n* Explore an alternative job description or requirements that address the candidate's visa and relocation concerns."
+    },
+    {
+        "id": "job_low_03",
+        "title": "Java Enterprise Developer",
+        "company": "Infosys",
+        "cities": [
+            "Mysore"
         ],
         "countries": [
             "India"
         ],
         "is_remote": false,
-        "is_hybride": true,
-        "is_onsite": false,
-        "salary_offered": 1000000,
+        "is_hybride": false,
+        "is_onsite": true,
+        "salary_offered": 450000,
         "visa_sponsorship_offered": false,
-        "start_date": "Within 1 month",
+        "start_date": "Immediate",
         "required_skills": [
-            "JavaScript",
-            "Selenium",
-            "Automation Testing"
+            "Java",
+            "Spring Boot",
+            "Oracle DB",
+            "SVN"
         ],
-        "description": "Develop and maintain automated test suites for web applications.",
-        "match_score": 64,
-        "match_reason": "The candidate has a good educational background from IIT ISM. They have relevant skills and experience in software development but require a longer notice period and prefer remote work. While the job location is available in their city preference, the job is onsite, and the salary is above their minimum preference. However, the job requires skills in JavaScript, Selenium, and Automation Testing, which are partially aligned with their skills.",
-        "clarification": "## JOB MISSION & DOMAIN\nThe QA Automation Engineer at Wipro will develop and maintain automated test suites for web applications, primarily working on-site in Bangalore, India. The role requires expertise in JavaScript, Selenium, and Automation Testing, with a need for collaboration and problem-solving skills to ensure the quality of web applications.\n\n### COMPATIBILITY INDEX: 45% | High\nThere are significant gaps in the required skills and experience for the QA Automation Engineer position at Wipro. Although the candidate has relevant skills and experience in software development, they lack expertise in JavaScript, Selenium, and Automation Testing.\n\n### TECHNICAL DELTA\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| JavaScript | Not mentioned | High Severity |\n| Selenium | Not mentioned | High Severity |\n| Automation Testing | Not mentioned | High Severity |\n| On-site work | Not mentioned | Medium Severity (prefers remote work) |\n| Notice period | Not mentioned | Medium Severity (requests immediately) |\n| Required skills | 8 out of 15 mentioned skills | Medium Severity (only partially aligned) |\n\n### STRATEGIC MISMATCHES\n\n- Salary mismatch: The candidate's minimum salary preference (15,000 INR) is lower than the offered salary (1,000,000 INR).\n- Visa sponsorship mismatch: The job does not offer visa sponsorship, but the candidate does not have a valid visa.\n- Location mismatch: The job is onsite in Bangalore, which is not the candidate's preferred location.\n\n### SYSTEM ADVISORY\nThe candidate's application has a 45% compatibility index, indicating a high risk of failure. The significant gaps in required skills and experience, along with the salary and visa sponsorship mismatches, make it challenging for the candidate to succeed in the QA Automation Engineer position at Wipro. The candidate would need to accept the onsite work arrangement, which goes against their preference for remote work, and demonstrate a willingness to learn and adapt to the required skills quickly."
+        "description": "Maintaining legacy banking systems using enterprise Java frameworks.",
+        "match_score": 45,
+        "match_reason": "While candidate has strong skills in frontend, backend, and data science, they lack direct Java experience. The candidate's strong background in competitive programming and passion for scalable solutions might be beneficial for some enterprise roles, however, this specific job requires Java knowledge which the candidate doesn't possess. Despite the low salary offered in the job and the candidate's open relocation policy, their preference for Google or Facebook isn't met here, as the company is Infosys. Considering these factors, the score is 45.",
+        "clarification": "## JOB MISSION & DOMAIN\nAs a Java Enterprise Developer at Infosys, the candidate will be responsible for maintaining legacy banking systems using enterprise Java frameworks. The job requires a strong background in Java, with experience in Spring Boot, Oracle DB, and SVN. The day-to-day reality of the job involves troubleshooting and resolving complex technical issues in a collaborative team environment, adhering to strict coding standards and version control practices. The domain presents technical challenges such as ensuring high-performance and scalability of banking systems, integrating with multiple databases, and implementing robust security measures to prevent data breaches.\n\n### COMPATIBILITY INDEX\n30% | Medium\nThe candidate's strong background in competitive programming and passion for scalable solutions are beneficial for some enterprise roles. However, the lack of direct Java experience and differing company preference significantly impact compatibility.\n\n### TECHNICAL DELTA\n\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| Java | Not mentioned | High |\n| Spring Boot | Not mentioned | High |\n| Oracle DB | Not mentioned | Medium |\n| SVN | Not mentioned | Low |\n| C++ | Mentioned | Low |\n| C | Mentioned | Low |\n| HTML | Mentioned | Low |\n| JavaScript | Mentioned | Low |\n| Docker | Mentioned | Low |\n| Tailwind CSS | Mentioned | Low |\n| Bootstrap | Mentioned | Low |\n| Node.js | Mentioned | Low |\n| Three.js | Mentioned | Low |\n| gsap | Mentioned | Low |\n| Firebase | Mentioned | Low |\n| MongoDB | Mentioned | Low |\n| PostgreSQL | Mentioned | Low |\n\n### STRATEGIC MISMATCHES\n- Differing company preference: The candidate's preference for Google or Facebook isn't met, as the company is Infosys.\n- Salary: The salary offered is significantly higher than the candidate's minimum salary requirement.\n- Visa sponsorship: The company does not offer visa sponsorship, while the candidate does not have a valid visa.\n\n### SYSTEM ADVISORY\nThe candidate lacks direct Java experience, which is a critical requirement for the job. Additionally, their differing company preference and salary mismatch significantly impact the application's viability. If the user chooses to proceed, they must accept the following conditions:\n\n* The candidate must acquire Java knowledge and experience within a short duration, which may impact their ability to meet the immediate start date.\n* The company must provide additional training or mentorship to help the candidate adapt to the Java ecosystem.\n* The salary negotiation process may be challenging, and the candidate"
     }
-   
 ]

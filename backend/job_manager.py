@@ -4,6 +4,7 @@ import time
 import os
 import json
 import requests
+import asyncio
 from dotenv import load_dotenv
 from data_types import User
 from uuid import uuid4
@@ -11,6 +12,7 @@ from datetime import datetime
 import db.mongo_db as db
 from filelock import FileLock
 
+from websocker_handle import websocket_manager
 from llm_handle import separate_and_rank_jobs , generate_clarification , generate_query_for_job_search , generate_resume , generate_cover_letter , generate_evidence_points
 
 load_dotenv()
@@ -19,7 +21,7 @@ API_BASE_URL = os.environ["API_BASE_URL"]
 MAX_RETRIES = 3
 RETRY_DELAY = 10 # sec
 
-def submit_application(user:User , job:dict , user_data , resume:str , cover_letter:str , evidence_points:str):
+async def submit_application(user:User , job:dict , user_data , resume:str , cover_letter:str , evidence_points:str):
     job_id = job.get("job_id") or job.get("id")
     if not job_id:
         print("Job id is required in function submit_application")
@@ -55,6 +57,16 @@ def submit_application(user:User , job:dict , user_data , resume:str , cover_let
             print(f"Successfully applied! Status: {response.json().get('status')}")
             data = response.json()
             print("Application result" , data)
+
+            role = job.get("title") or job.get("role")
+            company = job.get("company")
+            job_id = job.get("job_id") or job.get("id")
+            data = {
+                "type": "applied",
+                "message": f"Application for {role} in {company} has been successfully applied.",
+                "job_id": f"{job_id}"
+            }
+            await websocket_manager.send_personal_message(user.user_id , data)
         else:
             print(f"API Error: {response.text}")
             return
@@ -64,7 +76,7 @@ def submit_application(user:User , job:dict , user_data , resume:str , cover_let
         return
 
 
-def job_retry_worker(user:User , job:dict , user_data=None):
+async def job_retry_worker(user:User , job:dict , user_data=None):
     
     if user_data is None  :
         print("User data not present in job_retry_worker fuction")
@@ -103,7 +115,7 @@ def job_retry_worker(user:User , job:dict , user_data=None):
             user_dir = f"./{user.user_id}"
             os.makedirs(user_dir, exist_ok=True)
 
-            submit_application(user, job , user_data=user_data , resume=resume , cover_letter=cover_letter , evidence_points=evidence_points)
+            await submit_application(user, job , user_data=user_data , resume=resume , cover_letter=cover_letter , evidence_points=evidence_points)
 
             print(f"User {user.user_id} applied to {job}")
 
@@ -191,10 +203,12 @@ def find_jobs(user , user_data=None):
 
     # 2. Slice the jobs
     # Jobs 0 to 5 (exclusive of 5, so 5 items total)
-    first_five = jobs[0:5]
+    # first_five = jobs[0:5]
+    first_five = jobs
     
     # Jobs 5 to last 
-    next_fifteen = jobs[5:]
+    # next_fifteen = jobs[5:]
+    next_fifteen = []
 
     if not user.is_active:
         return []
@@ -227,13 +241,13 @@ def find_jobs(user , user_data=None):
         with open(storage_path, "w") as f:
             json.dump(updated_jobs, f, indent=4)
 
-    print(first_five)
+    # print(first_five)
 
     # 4. Return the first 5 jobs
     return first_five
 
 
-def user_worker(user:User ):
+async def user_worker(user:User ):
 
     # 1. Prepare User Data 
     print("Getting user data" , user.user_id)
@@ -252,84 +266,84 @@ def user_worker(user:User ):
     print(f"Worker started for User {user.user_id}")
 
     # 🔹 Call find_jobs ONLY ONCE
-    # top_jobs = find_jobs(user , user_data=user_data)
-    top_jobs = [
-        {
-            "id": "job_101",
-            "title": "Backend Developer",
-            "company": "Infosys",
-            "cities": ["Bangalore"],
-            "countries": ["India"],
-            "is_remote": False,
-            "is_hybride": True,
-            "is_onsite": False,
-            "salary_offered": 1200000,
-            "visa_sponsorship_offered": False,
-            "start_date": "Immediate",
-            "required_skills": ["Node.js", "Express", "MongoDB", "PostgreSQL"],
-            "description": "Building scalable backend APIs and database-driven applications."
-        },
-        {
-            "id": "job_103",
-            "title": "Software Engineer",
-            "company": "Flipkart",
-            "cities": ["Bangalore"],
-            "countries": ["India"],
-            "is_remote": False,
-            "is_hybride": True,
-            "is_onsite": False,
-            "salary_offered": 1800000,
-            "visa_sponsorship_offered": False,
-            "start_date": "Within 2 months",
-            "required_skills": ["JavaScript", "Node.js", "MongoDB", "React.js"],
-            "description": "Work on scalable services and frontend integrations."
-        },
-        {
-            "id": "job_201",
-            "title": "Mechanical Design Engineer",
-            "company": "Larsen & Toubro",
-            "cities": ["Chennai"],
-            "countries": ["India"],
-            "is_remote": False,
-            "is_hybride": False,
-            "is_onsite": True,
-            "salary_offered": 600000,
-            "visa_sponsorship_offered": False,
-            "start_date": "Within 1 month",
-            "required_skills": ["AutoCAD", "SolidWorks", "Thermodynamics"],
-            "description": "Design mechanical components and systems."
-        },
-        {
-            "id": "job_401",
-            "title": "QA Automation Engineer",
-            "company": "Wipro",
-            "cities": ["Bangalore"],
-            "countries": ["India"],
-            "is_remote": False,
-            "is_hybride": True,
-            "is_onsite": False,
-            "salary_offered": 1000000,
-            "visa_sponsorship_offered": False,
-            "start_date": "Within 1 month",
-            "required_skills": ["JavaScript", "Selenium", "Automation Testing"],
-            "description": "Develop and maintain automated test suites for web applications."
-        },
-        {
-            "id": "job_402",
-            "title": "DevOps Engineer",
-            "company": "Tech Mahindra",
-            "cities": ["Pune"],
-            "countries": ["India"],
-            "is_remote": False,
-            "is_hybride": True,
-            "is_onsite": False,
-            "salary_offered": 1400000,
-            "visa_sponsorship_offered": False,
-            "start_date": "Within 2 months",
-            "required_skills": ["AWS", "CI/CD", "Linux", "Kubernetes"],
-            "description": "Manage deployment pipelines and cloud infrastructure."
-        }
-    ]
+    top_jobs = find_jobs(user , user_data=user_data)
+    # top_jobs = [
+    #     {
+    #         "id": "job_101",
+    #         "title": "Backend Developer",
+    #         "company": "Infosys",
+    #         "cities": ["Bangalore"],
+    #         "countries": ["India"],
+    #         "is_remote": False,
+    #         "is_hybride": True,
+    #         "is_onsite": False,
+    #         "salary_offered": 1200000,
+    #         "visa_sponsorship_offered": False,
+    #         "start_date": "Immediate",
+    #         "required_skills": ["Node.js", "Express", "MongoDB", "PostgreSQL"],
+    #         "description": "Building scalable backend APIs and database-driven applications."
+    #     },
+    #     {
+    #         "id": "job_103",
+    #         "title": "Software Engineer",
+    #         "company": "Flipkart",
+    #         "cities": ["Bangalore"],
+    #         "countries": ["India"],
+    #         "is_remote": False,
+    #         "is_hybride": True,
+    #         "is_onsite": False,
+    #         "salary_offered": 1800000,
+    #         "visa_sponsorship_offered": False,
+    #         "start_date": "Within 2 months",
+    #         "required_skills": ["JavaScript", "Node.js", "MongoDB", "React.js"],
+    #         "description": "Work on scalable services and frontend integrations."
+    #     },
+    #     {
+    #         "id": "job_201",
+    #         "title": "Mechanical Design Engineer",
+    #         "company": "Larsen & Toubro",
+    #         "cities": ["Chennai"],
+    #         "countries": ["India"],
+    #         "is_remote": False,
+    #         "is_hybride": False,
+    #         "is_onsite": True,
+    #         "salary_offered": 600000,
+    #         "visa_sponsorship_offered": False,
+    #         "start_date": "Within 1 month",
+    #         "required_skills": ["AutoCAD", "SolidWorks", "Thermodynamics"],
+    #         "description": "Design mechanical components and systems."
+    #     },
+    #     {
+    #         "id": "job_401",
+    #         "title": "QA Automation Engineer",
+    #         "company": "Wipro",
+    #         "cities": ["Bangalore"],
+    #         "countries": ["India"],
+    #         "is_remote": False,
+    #         "is_hybride": True,
+    #         "is_onsite": False,
+    #         "salary_offered": 1000000,
+    #         "visa_sponsorship_offered": False,
+    #         "start_date": "Within 1 month",
+    #         "required_skills": ["JavaScript", "Selenium", "Automation Testing"],
+    #         "description": "Develop and maintain automated test suites for web applications."
+    #     },
+    #     {
+    #         "id": "job_402",
+    #         "title": "DevOps Engineer",
+    #         "company": "Tech Mahindra",
+    #         "cities": ["Pune"],
+    #         "countries": ["India"],
+    #         "is_remote": False,
+    #         "is_hybride": True,
+    #         "is_onsite": False,
+    #         "salary_offered": 1400000,
+    #         "visa_sponsorship_offered": False,
+    #         "start_date": "Within 2 months",
+    #         "required_skills": ["AWS", "CI/CD", "Linux", "Kubernetes"],
+    #         "description": "Manage deployment pipelines and cloud infrastructure."
+    #     }
+    # ]
     
     # Process jobs currently in memory
     while user.is_active :
@@ -340,7 +354,7 @@ def user_worker(user:User ):
             
             try:
                 print("Start separrating and scoring and rerank the jobs")
-                top_jobs = separate_and_rank_jobs(user , top_jobs , user_data=user_data)
+                top_jobs = await separate_and_rank_jobs(user , top_jobs , user_data=user_data)
 
                 if not user.is_active:
                     return
@@ -357,14 +371,18 @@ def user_worker(user:User ):
                     #     daemon=True
                     # )
                     # thread.start()
-                    job_retry_worker(user=user , job=job , user_data=user_data)
+                    await job_retry_worker(user=user , job=job , user_data=user_data)
                 
                 # process the jobs that need clarification
+                print("process the jobs that need clarification")
                 clarify_jobs = []
                 # Check if file exists
                 if not os.path.exists(clarify_jobs_path):
                     print(f"No clarify jobs file found for user {user.user_id}")
                     clarify_jobs = []
+                    with lock :
+                        with open(clarify_jobs_path, "w") as f:
+                            json.dump([], f)
 
                 lock_path = clarify_jobs_path + ".lock"
                 lock = FileLock(lock_path, timeout=10)
@@ -377,20 +395,35 @@ def user_worker(user:User ):
                             print(f"File {clarify_jobs_path} is empty or corrupted")
                             jobs = []
 
-                    for job in jobs:
-                        if "clarification" in job:
-                            clarify_jobs.append(job)
-                            continue
 
-                        # Make a shallow copy without 'reason' to send to the function
-                        job_for_clarification = {k: v for k, v in job.items() if k != "reason"}
-                        
-                        # Call function
-                        clarification = generate_clarification(user, job_for_clarification, user_data)
+                for job in jobs:
+                    if not user.is_active:
+                        return
 
-                        job["clarification"] = clarification
+                    if "clarification" in job:
                         clarify_jobs.append(job)
+                        continue
+
+                    # Make a shallow copy without 'reason' to send to the function
+                    job_for_clarification = {k: v for k, v in job.items() if k != "reason"}
                     
+                    # Call function
+                    clarification = generate_clarification(user, job_for_clarification, user_data)
+
+                    job["clarification"] = clarification
+                    clarify_jobs.append(job)
+
+                    role = job.get("title") or job.get("role")
+                    company = job.get("company")
+                    job_id = job.get("job_id") or job.get("id")
+                    data = {
+                        "type": "clarify",
+                        "message": f"Application for {role} in {company} need your clarification.",
+                        "job_id": f"{job_id}"
+                    }
+                    await websocket_manager.send_personal_message(user.user_id , data)
+
+                with lock:   
                     # Write back the updated array to file
                     with open(clarify_jobs_path, "w") as f:
                         json.dump(clarify_jobs, f, indent=4)
@@ -426,6 +459,7 @@ def user_worker(user:User ):
             
             except Exception as e:
                 print("Error in User worker " ,e)
+                break
 
         break  # this line must be removed later
         time.sleep(PROCESS_INTERVAL)  # wait before next cycle
@@ -443,9 +477,12 @@ class JobManager:
         user = self.users[user_id]
         user.is_active = True
 
+        def run_async_worker():
+            asyncio.run(user_worker(user))
+
         thread = threading.Thread(
-            target=user_worker,
-            args=(user,)
+            target=run_async_worker,
+            args=()
         )
         thread.start()
 

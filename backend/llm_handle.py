@@ -8,6 +8,7 @@ from filelock import FileLock
 
 from data_types import User
 from document_loader.parser import _clean_model_response
+from websocker_handle import websocket_manager
 
 load_dotenv()
 
@@ -205,7 +206,7 @@ def generate_clarification(user:User , job:dict , user_data=None):
         raise Exception("Failed to generate clarification points. Please check your LLM connection.")
 
 
-def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
+async def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
     if len(jobs)==0 or user_data is None:
         return []
     
@@ -239,7 +240,7 @@ def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
         print("process job " , job["id"])
         try:
             response = chain.invoke({"user_json": user_json, "job_json": job_json})
-            print("raw model repsonse " , response)
+            print("raw model repsonse " , response.content.strip())
             # Parse the JSON response from LLM
             # Note: Depending on output, you might need to clean markdown ```json ... ```
             data = _clean_model_response(response.content.strip())
@@ -253,6 +254,16 @@ def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
         # 2. Logic for Ranking and Filing
         if int(score) <= REJECT_THRESHOLD_SCORE:
             rejected_list.append(job)
+            role = job["title"]
+            company = job["company"]
+            job_id = job["id"]
+            data = {
+                "type": "rejected",
+                "message": f"Application for {role} in {company} has been discarded.",
+                "job_id": f"{job_id}"
+            }
+            await websocket_manager.send_personal_message(user_id , data)
+
         elif int(score) <= CLARIFY_THRESHOLD_SCORE:
             clarify_list.append(job)
         else:
@@ -262,7 +273,7 @@ def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
     def append_to_file(filename, new_data):
         path = os.path.join(user_dir, filename)
         current_data = []
-        lock_path = storage_path + ".lock"
+        lock_path = path + ".lock"
 
         lock = FileLock(lock_path , timeout=10)
 
@@ -277,9 +288,6 @@ def separate_and_rank_jobs(user:User , jobs:list , user_data = None):
             with open(path, 'w') as f:
                 json.dump(current_data, f, indent=4)
 
-    if not user.is_active:
-        print("User is not active")
-        return
     if rejected_list: append_to_file('rejected_jobs.json', rejected_list)
     if clarify_list: append_to_file('clarify_jobs.json', clarify_list)
 

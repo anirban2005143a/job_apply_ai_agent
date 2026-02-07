@@ -27,6 +27,6 @@ export interface UserApplicationStatus {
   status: {
     accepted?: any[];
     rejected?: any[];
-    onprocess?: any[];
+    on_process?: any[];
   };
 }

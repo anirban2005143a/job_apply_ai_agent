@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
 import { ToastContainer } from "react-toastify";
 import { showToast } from "@/lib/showToast";
 import {
@@ -201,12 +200,10 @@ const DashboardPage = () => {
     }
   };
 
-  console.log(recentJobs);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Navbar />
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col items-center gap-3">
             <Loader className="w-6 h-6 animate-spin text-blue-600 dark:text-blue-500" />
@@ -226,12 +223,13 @@ const DashboardPage = () => {
   const rejectedPct =
     stats.total > 0 ? (stats.rejected / stats.total) * 100 : 0;
 
+  console.log(applicationStatus)
+
   return (
     <>
       <ToastContainer />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Navbar />
 
         <div className="pt-20 px-4 sm:px-6 pb-8 max-w-7xl mx-auto">
           {/* Header Section - More Compact */}
@@ -267,7 +265,7 @@ const DashboardPage = () => {
               <button
                 onClick={handleToggleProcessing}
                 disabled={processToggleLoading}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isProcessing
                     ? "bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white"
                     : "bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white"
@@ -321,8 +319,8 @@ const DashboardPage = () => {
                     <RefreshCw className="w-3 h-3 text-blue-600 dark:text-blue-400" />
                   </div>
                   <p className="text-xl font-bold text-blue-700 dark:text-blue-400">
-                    {Array.isArray(applicationStatus.status.onprocess)
-                      ? applicationStatus.status.onprocess.length
+                    {(Array.isArray(applicationStatus.status.on_process))
+                      ? applicationStatus.status.on_process.length
                       : 0}
                   </p>
                 </div>
@@ -549,7 +547,7 @@ const DashboardPage = () => {
                   <div className="text-center py-4">
                     <XCircle className="w-8 h-8 text-gray-400 dark:text-gray-600 mx-auto mb-2" />
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No recent rejections
+                      No recent discarded jobs
                     </p>
                   </div>
                 )}
@@ -605,7 +603,7 @@ const DashboardPage = () => {
                   <div className="text-center py-4">
                     <Clock className="w-8 h-8 text-gray-400 dark:text-gray-600 mx-auto mb-2" />
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      No pending applications
+                      No pending job applications
                     </p>
                   </div>
                 )}
@@ -686,8 +684,8 @@ const DashboardPage = () => {
                 applicationStatus.status.accepted.length === 0) &&
                 (!Array.isArray(applicationStatus.status.rejected) ||
                   applicationStatus.status.rejected.length === 0) &&
-                (!Array.isArray(applicationStatus.status.onprocess) ||
-                  applicationStatus.status.onprocess.length === 0)) ? (
+                (!Array.isArray(applicationStatus.status.on_process) ||
+                  applicationStatus.status.on_process.length === 0)) ? (
                 <div className="flex flex-col items-center justify-center h-60 text-gray-500 dark:text-gray-400">
                   <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-full flex items-center justify-center mb-3">
                     <PieChartIcon className="w-8 h-8 text-gray-400 dark:text-gray-500" />
@@ -714,8 +712,8 @@ const DashboardPage = () => {
                         : 0
                     }
                     onprocess={
-                      Array.isArray(applicationStatus?.status?.onprocess)
-                        ? applicationStatus.status.onprocess.length
+                      Array.isArray(applicationStatus?.status?.on_process)
+                        ? applicationStatus.status.on_process.length
                         : 0
                     }
                   />
@@ -734,9 +732,9 @@ const DashboardPage = () => {
                         ? applicationStatus.status.rejected.length
                         : 0;
                       const onprocessCount = Array.isArray(
-                        applicationStatus?.status?.onprocess,
+                        applicationStatus?.status?.on_process,
                       )
-                        ? applicationStatus.status.onprocess.length
+                        ? applicationStatus.status.on_process.length
                         : 0;
                       const totalOutcomes =
                         acceptedCount + rejectedCount + onprocessCount;
@@ -957,6 +955,8 @@ const ApplicationOutcomesPieChart = ({
   const total = accepted + rejected + onprocess;
   if (total === 0) return null;
 
+  console.log(accepted)
+
   // Softer, professional colors
   const colors = {
     accepted: "#22c55e", // green-500
@@ -988,27 +988,34 @@ const ApplicationOutcomesPieChart = ({
   let currentAngle = 0;
 
   const paths = slices.map((slice) => {
-    if (slice.value === 0) return null;
+  if (slice.value === 0) return null;
 
-    const sliceAngle = (slice.value / total) * 360;
-    const [x1, y1] = getCoordinates(currentAngle);
-    const [x2, y2] = getCoordinates(currentAngle + sliceAngle);
-    const largeArc = sliceAngle > 180 ? 1 : 0;
+  // If this slice is 100% of the total, we use 359.99 instead of 360 
+  // to prevent the SVG arc from disappearing.
+  const isFullCircle = slice.value === total;
+  const sliceAngle = isFullCircle ? 359.99 : (slice.value / total) * 360;
+  
+  const [x1, y1] = getCoordinates(currentAngle);
+  const [x2, y2] = getCoordinates(currentAngle + sliceAngle);
+  const largeArc = sliceAngle > 180 ? 1 : 0;
 
-    const pathData = `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-    currentAngle += sliceAngle;
+  const pathData = `M ${center} ${center} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+  
+  // Update currentAngle for the next slice
+  currentAngle += (slice.value / total) * 360;
 
-    return (
-      <path
-        key={slice.name}
-        d={pathData}
-        fill={slice.color}
-        onMouseEnter={() => setHoveredSlice(slice)}
-        onMouseLeave={() => setHoveredSlice(null)}
-        className="transition-transform duration-200 hover:scale-105 hover:opacity-90 cursor-pointer"
-      />
-    );
-  });
+  return (
+    <path
+      key={slice.name}
+      d={pathData}
+      fill={slice.color}
+      onMouseEnter={() => setHoveredSlice(slice)}
+      onMouseLeave={() => setHoveredSlice(null)}
+      style={{ transformOrigin: `${center}px ${center}px` }} // Fix for scale animation
+      className="transition-all duration-200 hover:scale-105 hover:opacity-90 cursor-pointer"
+    />
+  );
+});
 
   // Tooltip content
   const tooltipContent = hoveredSlice

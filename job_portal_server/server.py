@@ -112,10 +112,15 @@ def already_applied(applied_file: str, job_id: str, email: str) -> bool:
 async def search_jobs(request: SearchRequest):
     """Return top matching jobs for a user query."""
     try:
-        results = search_top_jobs(
-            query=request.query,
-            vector_db=vector_db,
-        )
+        # results = search_top_jobs(
+        #     query=request.query,
+        #     vector_db=vector_db,
+        # )
+        results = []
+        JOB_PATH = r"./jobs.json" 
+        with open(JOB_PATH, 'r') as f:
+            results = json.load(f)
+
         return {
             "query": request.query,
             "results": results
@@ -137,11 +142,11 @@ async def apply_job(payload: ApplyRequest):
         )
     
     # ---- prevent duplicate application ----
-    if already_applied(APPLIED_FILE, payload.job_id, str(payload.email)):
-        raise HTTPException(
-            status_code=409,
-            detail="You have already applied for this job with this email"
-        )
+    # if already_applied(APPLIED_FILE, payload.job_id, str(payload.email)):
+    #     raise HTTPException(
+    #         status_code=409,
+    #         detail="You have already applied for this job with this email"
+    #     )
     
     application_id = str(uuid4())
     timestamp = datetime.utcnow().isoformat()
@@ -206,6 +211,7 @@ async def application_status(email: EmailStr):
         all_pending = read_json(PENDING_FILE)
         on_process = [rec for rec in all_pending if rec.get("email") == email]
 
+        
         return {
             "accepted": accepted,
             "rejected": rejected,

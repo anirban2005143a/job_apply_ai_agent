@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Briefcase, Filter, Search } from "lucide-react";
 import AppliedJobCard, { AppliedJob } from "./AppliedJobCard";
 import { Footer } from "@/components/landing/footer";
-import Navbar from "@/components/Navbar";
 import { showToast } from "@/lib/showToast";
 import { ToastContainer } from "react-toastify";
 import { usePathname } from "next/navigation";

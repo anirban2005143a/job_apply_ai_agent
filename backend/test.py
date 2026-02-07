@@ -12,7 +12,8 @@ job_manager.add_user(user_id)
 
 job_manager.start_user(user_id)
 
-time.sleep(2*60)
+# time.sleep(3*60)
 
-job_manager.stop_user(user_id=user_id)
+# job_manager.stop_user(user_id=user_id)
 
+# print("user" , db.get_user_profile(user_id=user_id))

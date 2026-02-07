@@ -1,53 +1,53 @@
 [
     {
-        "id": "job_201",
-        "title": "Mechanical Design Engineer",
-        "company": "Larsen & Toubro",
+        "id": "job_mid_03",
+        "title": "DevOps Associate",
+        "company": "Cloudflare",
         "cities": [
-            "Chennai"
+            "Austin"
         ],
         "countries": [
-            "India"
+            "United States"
         ],
-        "is_remote": false,
+        "is_remote": true,
         "is_hybride": false,
-        "is_onsite": true,
-        "salary_offered": 600000,
-        "visa_sponsorship_offered": false,
-        "start_date": "Within 1 month",
+        "is_onsite": false,
+        "salary_offered": 95000,
+        "visa_sponsorship_offered": true,
+        "start_date": "September 2026",
         "required_skills": [
-            "AutoCAD",
-            "SolidWorks",
-            "Thermodynamics"
+            "Docker",
+            "Kubernetes",
+            "C++",
+            "Networking"
         ],
-        "description": "Design mechanical components and systems.",
-        "match_score": 25,
-        "match_reason": "The candidate is a software developer with front-end, back-end, and data science experience, but the job requires a Mechanical Design Engineer with skills in AutoCAD, SolidWorks, and Thermodynamics. The job does not match the candidate's job experience, skills, or company preferences. The job is not remote, which doesn't match the candidate's work mode preference. The salary offered is higher than the candidate's minimum salary requirement, but the job does not align with the candidate's technical expertise."
+        "description": "Maintaining global edge networks. Matches your Docker/C++ skills but shifts focus to Infra.",
+        "match_score": 24,
+        "match_reason": "The candidate has 2 years of frontend/backend experience but lacks in DevOps and networking skills. Although Docker is listed as a skill, it's not ranked high. Achievements are impressive, but they don't directly align with DevOps roles. Difficulty in relocation due to no visa and immediate notice period. Eligible for company (Cloudflare) and minimum salary (95000), but relocation to the United States is not a preference."
     },
     {
-        "id": "job_402",
-        "title": "DevOps Engineer",
-        "company": "Tech Mahindra",
+        "id": "job_low_02",
+        "title": "UI/UX Designer",
+        "company": "Canva",
         "cities": [
-            "Pune"
+            "Sydney"
         ],
         "countries": [
-            "India"
+            "Australia"
         ],
-        "is_remote": false,
-        "is_hybride": true,
+        "is_remote": true,
+        "is_hybride": false,
         "is_onsite": false,
-        "salary_offered": 1400000,
+        "salary_offered": 110000,
         "visa_sponsorship_offered": false,
-        "start_date": "Within 2 months",
+        "start_date": "Immediate",
         "required_skills": [
-            "AWS",
-            "CI/CD",
-            "Linux",
-            "Kubernetes"
+            "Figma",
+            "User Research",
+            "Prototyping"
         ],
-        "description": "Manage deployment pipelines and cloud infrastructure.",
-        "match_score": 0,
-        "match_reason": "The candidate's technical skills and experience do not align with the job's required skills. They lack DevOps-related experience and skills such as AWS, CI/CD, Linux, and Kubernetes. Additionally, the candidate's preferred work mode includes 'Remote', which conflicts with the job's 'is_remote' setting to 'false', and they would not be able to relocate to Pune immediately, which is in line with the 'noticePeriod' of 'immediately' set by the candidate."
+        "description": "Leading design sprints and creating high-fidelity wireframes.",
+        "match_score": 20,
+        "match_reason": "The candidate has a mismatch with the job requirements. Their technical skills and role experience are in frontend development and backend development, whereas the job requires UI/UX design skills (Figma, User Research, Prototyping). Although they have experience in React and Node.js, it does not translate to UI/UX design skills. They have a strong educational background, but it does not align with the job requirements. Their experience in competitive programming and hackathons is impressive, but it also does not directly relate to the job at hand. Their preferences for 'workMode' and 'companyPreference' are not aligned with the job, and their salary requirement is also not met by the job offer."
     }
 ]

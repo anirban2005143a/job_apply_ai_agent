@@ -1,0 +1,53 @@
+[
+    {
+        "id": "job_low_02",
+        "title": "UI/UX Designer",
+        "company": "Canva",
+        "cities": [
+            "Sydney"
+        ],
+        "countries": [
+            "Australia"
+        ],
+        "is_remote": true,
+        "is_hybride": false,
+        "is_onsite": false,
+        "salary_offered": 110000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Immediate",
+        "required_skills": [
+            "Figma",
+            "User Research",
+            "Prototyping"
+        ],
+        "description": "Leading design sprints and creating high-fidelity wireframes.",
+        "match_score": 30,
+        "match_reason": "The candidate is not a good match for this UI/UX Designer position. Technical skills (40%) don't match as the candidate has skills in development languages and technologies rather than UI/UX design tools like Figma. Also, the role experience does not include UI/UX design roles. The candidate's education, achievements, and projects don't directly relate to UI/UX design. Additionally, the candidate's work mode preference does not strictly require onsite work, but the company's onsite requirement is an issue. Minimum salary is not a problem in this case, but relocation openness is an issue since the candidate prefers to stay in India or the US, and relocation to Australia is needed. The company preference does not match as the candidate prefers Google or Facebook, but the company is Canva."
+    },
+    {
+        "id": "job_low_03",
+        "title": "Java Enterprise Developer",
+        "company": "Infosys",
+        "cities": [
+            "Mysore"
+        ],
+        "countries": [
+            "India"
+        ],
+        "is_remote": false,
+        "is_hybride": false,
+        "is_onsite": true,
+        "salary_offered": 450000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Immediate",
+        "required_skills": [
+            "Java",
+            "Spring Boot",
+            "Oracle DB",
+            "SVN"
+        ],
+        "description": "Maintaining legacy banking systems using enterprise Java frameworks.",
+        "match_score": 0,
+        "match_reason": "Candidate's technical skills and role experience do not match the job description. Candidate has experience in frontend and backend development using React and other technologies, but the job requires Java Enterprise development experience. Candidate's company preference includes Google and Facebook, but the job is at Infosys."
+    }
+]

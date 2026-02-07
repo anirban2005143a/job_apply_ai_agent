@@ -177,7 +177,7 @@ export default function LoginPage() {
             <div className="mt-8 text-center text-sm font-medium">
               <span className="text-zinc-400 mr-1">No account? </span>
               <Link
-                href="/onboarding"
+                href="/onboarding/upload"
                 className="text-zinc-900 text-sm dark:text-zinc-50 underline underline-offset-4 decoration-zinc-300 dark:decoration-zinc-700 hover:decoration-current transition-all"
               >
                 Create one now

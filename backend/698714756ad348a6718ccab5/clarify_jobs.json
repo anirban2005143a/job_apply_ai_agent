@@ -1,0 +1,29 @@
+[
+    {
+        "id": "job_low_03",
+        "title": "Java Enterprise Developer",
+        "company": "Infosys",
+        "cities": [
+            "Mysore"
+        ],
+        "countries": [
+            "India"
+        ],
+        "is_remote": false,
+        "is_hybride": false,
+        "is_onsite": true,
+        "salary_offered": 450000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Immediate",
+        "required_skills": [
+            "Java",
+            "Spring Boot",
+            "Oracle DB",
+            "SVN"
+        ],
+        "description": "Maintaining legacy banking systems using enterprise Java frameworks.",
+        "match_score": 62,
+        "match_reason": "Strong backend and Java skills are missing in the candidate's profile. However, the candidate has experience with Express.js, MongoDB, and Node.js which could be beneficial in a Java Enterprise Developer role if adapted to Java. The candidate is open to relocation and has a notice period of 'immediately'. They also have a strong preference for Google and Facebook but no Google or Facebook experience is mentioned. The minimum salary requirement of the candidate is met by the job, but they are not flexible with their notice period, which might be a concern for the company.",
+        "clarification": "### JOB MISSION & DOMAIN\nThe Java Enterprise Developer role at Infosys involves maintaining legacy banking systems using enterprise Java frameworks. The domain presents specific technical challenges, such as adapting to the Java ecosystem, familiarizing oneself with Spring Boot, and understanding Oracle DB and SVN. The role requires hands-on experience with Java, as well as proficiency in enterprise software development methodologies. \n\n### COMPATIBILITY INDEX\n20% | High Risk\n\n### TECHNICAL DELTA\n| Requirement | Candidate Status | Gap Severity |\n| --- | --- | --- |\n| Java Enterprise Development | Not mentioned (listed as 'Not mentioned') | High Severity |\n| Spring Boot | Not mentioned | High Severity |\n| Oracle DB | Not mentioned | High Severity |\n| SVN | Not mentioned | High Severity |\n| Management of Legacy Banking Systems | Not mentioned | Medium Severity |\n| Enterprise Java Frameworks | Not mentioned | High Severity |\n\n### STRATEGIC MISMATCHES\n* Salary: The candidate's minimum salary requirement (70,000) is lower than the job's offered salary (450,000), but this is not a High Severity gap.\n* Visa: The company does not offer visa sponsorship for the candidate, and the candidate does not have a visa.\n* Location: The job is located in Mysore, India, which is within the candidate's preferred country (India) but the job is not remote, and the candidate is open to relocation.\n* Company Preference: The candidate prefers Google and Facebook but does not have any experience with these companies.\n\n### SYSTEM ADVISORY\nBased on the provided data, the candidate's compatibility with the Java Enterprise Developer role at Infosys is low due to several gaps in technical skills and requirements. The candidate lacks hands-on experience with Java, Spring Boot, Oracle DB, and SVN. They have experience with Express.js, MongoDB, and Node.js, but this is not directly applicable to the Java Enterprise Developer role. The candidate is open to relocation, but the job is onsite in Mysore, and they have a preference for Google and Facebook. However, the salary requirement is met, and the notice period is 'immediately', which may be a concern for the company.\n\nHard Truths:\n\n* **The candidate lacks essential technical skills for the role**, including Java, Spring Boot, Oracle DB, and SVN.\n* **Adaptability to the Java ecosystem will be challenging**, considering the candidate's limited experience.\n* **No direct experience with Google or Facebook**, which may affect their fit with the preferred companies.\n\nIf the"
+    }
+]

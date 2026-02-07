@@ -124,7 +124,7 @@ const AppliedJobCard = ({ application }: { application: AppliedJob }) => {
 
         <div className="mt-5 flex justify-between items-center">
           <div className="flex gap-1.5">
-            {application.job.required_skills.slice(0, 3).map((skill) => (
+            {application.job.required_skills.map((skill) => (
               <span
                 key={skill}
                 className="text-[12px] font-medium text-slate-500 dark:text-zinc-500 bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 px-1.5 py-0.5 rounded"

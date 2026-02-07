@@ -40,8 +40,8 @@ async def submit_application(user:User , job:dict , user_data , resume:str , cov
         # 3. Prepare Payload for the API
         payload = {
             "job_id": str(job_id),
+            "user_id": str(user.user_id),
             "name": user_data.get("full_name"),
-            "email": user_data.get("email"),
             "phone": user_data.get("phone"),
             "resume": resume,
             "cover_letter": cover_letter,

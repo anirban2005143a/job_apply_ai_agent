@@ -70,6 +70,7 @@ const JobClarificationPage: React.FC = () => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [clarifyJobs, setClarifyJobs] = useState<Job[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentJob = clarifyJobs[activeJobIndex];
 
@@ -78,15 +79,61 @@ const JobClarificationPage: React.FC = () => {
     setShowModal(true);
   };
 
-  const confirmAction = () => {
-    if (pendingSelection) {
-      console.log(`USER_DECISION: ${pendingSelection.toUpperCase()}`);
-      console.log(`JOB_ID: ${currentJob.id}`);
-      console.log(`COMPANY: ${currentJob.company}`);
-      setShowModal(false);
-      if (activeJobIndex < clarifyJobs.length - 1) {
-        setActiveJobIndex((prev) => prev + 1);
+  const confirmAction = async () => {
+    if (!pendingSelection || !currentJob) return;
+    
+    setIsSubmitting(true);
+    try {
+      const userId = getCookie("user_id");
+      const decision = pendingSelection === "yes" ? "yes" : "no";
+      
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/clarify/${userId}/submit?job_id=${currentJob.id}&decision=${decision}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to submit clarification");
       }
+      
+      const result = await response.json();
+      
+      // Show success toast
+      showToast(
+        `Job ${decision === "yes" ? "approved and moved to pending" : "discarded"}!`,
+        1
+      );
+      
+      // Remove current job from list
+      const updatedJobs = clarifyJobs.filter((job) => job.id !== currentJob.id);
+      setClarifyJobs(updatedJobs);
+      
+      setShowModal(false);
+      setPendingSelection(null);
+      
+      // Move to next job if available, otherwise go back to first
+      if (updatedJobs.length > 0) {
+        if (activeJobIndex >= updatedJobs.length) {
+          setActiveJobIndex(updatedJobs.length - 1);
+        }
+      } else {
+        setActiveJobIndex(0);
+      }
+      
+    } catch (error) {
+      console.error("Error submitting clarification:", error);
+      showToast(
+        error instanceof Error ? error.message : "Failed to submit clarification",
+        0
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -335,6 +382,7 @@ const JobClarificationPage: React.FC = () => {
             pendingSelection={pendingSelection}
             currentJob={currentJob}
             confirmAction={confirmAction}
+            isSubmitting={isSubmitting}
           />
         )}
       </div>
@@ -350,6 +398,7 @@ const ConfirmationModal = ({
   pendingSelection,
   currentJob,
   confirmAction,
+  isSubmitting,
 }: any) => {
   return (
     <AnimatePresence>
@@ -515,7 +564,8 @@ const ConfirmationModal = ({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setShowModal(false)}
-                      className="flex-1 px-4 py-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors duration-150 font-medium text-sm"
+                      disabled={isSubmitting}
+                      className="flex-1 px-4 py-2.5 rounded-lg border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors duration-150 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Cancel
                     </motion.button>
@@ -526,13 +576,23 @@ const ConfirmationModal = ({
                       }}
                       whileTap={{ scale: 0.98 }}
                       onClick={confirmAction}
+                      disabled={isSubmitting}
                       className={`flex-1 px-4 py-2.5 rounded-lg font-medium text-sm transition-all duration-150 ${
                         pendingSelection === "yes"
-                          ? "bg-zinc-800 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 shadow-sm"
-                          : "bg-zinc-600 hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-white dark:text-zinc-200 shadow-sm"
+                          ? "bg-zinc-800 hover:bg-zinc-700 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 shadow-sm disabled:opacity-50"
+                          : "bg-zinc-600 hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-white dark:text-zinc-200 shadow-sm disabled:opacity-50"
                       }`}
                     >
-                      {pendingSelection === "yes" ? (
+                      {isSubmitting ? (
+                        <motion.span
+                          initial={{ opacity: 0, x: -5 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex items-center justify-center"
+                        >
+                          <div className="w-4 h-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
+                          Processing...
+                        </motion.span>
+                      ) : pendingSelection === "yes" ? (
                         <motion.span
                           initial={{ opacity: 0, x: -5 }}
                           animate={{ opacity: 1, x: 0 }}

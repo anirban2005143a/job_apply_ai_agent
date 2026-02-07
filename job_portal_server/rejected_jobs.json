@@ -1,1 +1,23 @@
-[]
+[
+  {
+    "application_id": "fdf3b043-d49b-4652-9877-e92147cbda45",
+    "job_id": "job_mid_02",
+    "user_id": "698714756ad348a6718ccab5",
+    "decision_at": "2026-02-07T10:51:25.556562",
+    "decision": "rejected"
+  },
+  {
+    "application_id": "be1a45bd-124e-4308-94f5-503bebcdaaee",
+    "job_id": "job_high_03",
+    "user_id": "698714756ad348a6718ccab5",
+    "decision_at": "2026-02-07T10:52:10.278683",
+    "decision": "rejected"
+  },
+  {
+    "application_id": "a19a99d8-d068-4d7c-bd7a-30abe7d631f5",
+    "job_id": "job_mid_03",
+    "user_id": "69871bcf720f6a69542765bc",
+    "decision_at": "2026-02-07T11:05:19.093500",
+    "decision": "rejected"
+  }
+]

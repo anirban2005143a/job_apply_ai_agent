@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Request , Path
+from fastapi import FastAPI, HTTPException, UploadFile, File, Request , Path, Query
 from fastapi import WebSocket , WebSocketDisconnect
 from fastapi.responses import JSONResponse
 from typing import List, Optional
@@ -279,10 +279,8 @@ async def status_by_userid(user_id: str = Path(..., description="The user ID")) 
     
     # Lookup the user by user_id
     user = db.get_user_profile(user_id=user_id)
-    if not user or "email" not in user:
+    if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
-    email = user["email"]
 
     # Call remote /status API
     try:
@@ -290,14 +288,13 @@ async def status_by_userid(user_id: str = Path(..., description="The user ID")) 
         async with httpx.AsyncClient() as client:
             response = await client.get(
                 f"{STATUS_API_BASE_URL}/status",
-                params={"email": email},
+                params={"user_id": user_id},
                 timeout=10.0
             )
             response.raise_for_status()  # raise exception if not 2xx
             status_data = response.json()
         return {
             "user_id": user_id,
-            "email": email,
             "status": status_data
         }
 
@@ -307,6 +304,123 @@ async def status_by_userid(user_id: str = Path(..., description="The user ID")) 
     except httpx.RequestError as e:
         print(e)
         raise HTTPException(status_code=500, detail=f"Error calling status API: {str(e)}")
+
+
+@app.post("/clarify/{user_id}/submit")
+async def submit_clarification(user_id: str, job_id: str = Query(...), decision: str = Query(...)):
+    """
+    Handle clarification decision: 'yes' (apply to job) or 'no' (move to rejected).
+    Remove job from clarify_jobs.json after processing.
+    Query params: job_id, decision (yes/no)
+    """
+    if decision not in ["yes", "no"]:
+        raise HTTPException(status_code=400, detail="Decision must be 'yes' or 'no'")
+    
+    try:
+        from job_manager import job_retry_worker
+        from data_types import User
+        
+        user_dir = f"./{user_id}"
+        os.makedirs(user_dir, exist_ok=True)
+        
+        clarify_file = os.path.join(user_dir, "clarify_jobs.json")
+        rejected_file = os.path.join(user_dir, "rejected_jobs.json")
+        
+        clarify_lock_path = clarify_file + ".lock"
+        rejected_lock_path = rejected_file + ".lock"
+        
+        # Read clarify jobs with lock
+        clarify_lock = FileLock(clarify_lock_path, timeout=10)
+        job_to_process = None
+        clarify_jobs = []
+        
+        with clarify_lock:
+            if os.path.exists(clarify_file):
+                with open(clarify_file, "r") as f:
+                    try:
+                        clarify_jobs = json.load(f)
+                    except json.JSONDecodeError:
+                        clarify_jobs = []
+            
+            # Find and extract job by id
+            for job in clarify_jobs:
+                if str(job.get("id")) == str(job_id):
+                    job_to_process = job
+                    break
+            
+            if not job_to_process:
+                raise HTTPException(status_code=404, detail=f"Job {job_id} not found in clarify list")
+            
+            # Remove from clarify list (we'll update after processing)
+            clarify_jobs_updated = [j for j in clarify_jobs if str(j.get("id")) != str(job_id)]
+        
+        # If decision is "yes", apply to the job using job_retry_worker
+        if decision == "yes":
+            # Get user data
+            user_data = db.get_user_profile(user_id=user_id)
+            if not user_data:
+                raise HTTPException(status_code=404, detail="User profile not found")
+            
+            # Create User object
+            user = User(user_id)
+            user.is_active = True
+            
+            # Call job_retry_worker to handle application with retry logic
+            await job_retry_worker(user, job_to_process, user_data=user_data)
+            
+            # After successful application, remove from clarify_jobs.json
+            with clarify_lock:
+                with open(clarify_file, "w") as f:
+                    json.dump(clarify_jobs_updated, f, indent=4)
+            
+            return {
+                "status": "success",
+                "message": f"Job {job_id} application submitted successfully",
+                "job_id": job_id,
+                "decision": decision,
+                "action": "applied"
+            }
+        
+        # If decision is "no", move to rejected
+        else:
+            rejected_lock = FileLock(rejected_lock_path, timeout=10)
+            
+            with rejected_lock:
+                # Read existing rejected jobs
+                if os.path.exists(rejected_file):
+                    with open(rejected_file, "r") as f:
+                        try:
+                            rejected_jobs = json.load(f)
+                        except json.JSONDecodeError:
+                            rejected_jobs = []
+                else:
+                    rejected_jobs = []
+                
+                # Append the job
+                rejected_jobs.append(job_to_process)
+                
+                # Write back
+                with open(rejected_file, "w") as f:
+                    json.dump(rejected_jobs, f, indent=4)
+            
+            # Remove from clarify_jobs.json
+            with clarify_lock:
+                with open(clarify_file, "w") as f:
+                    json.dump(clarify_jobs_updated, f, indent=4)
+            
+            return {
+                "status": "success",
+                "message": f"Job {job_id} moved to rejected",
+                "job_id": job_id,
+                "decision": decision,
+                "action": "rejected"
+            }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in submit_clarification: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.websocket("/ws/{user_id}")

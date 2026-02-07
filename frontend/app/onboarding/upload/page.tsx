@@ -94,7 +94,9 @@ function UploadPageContent() {
               transition-colors disabled:cursor-not-allowed
             "
               >
-                {loading ? "Processing..." : "Next"}
+                {loading ? <>
+                <Loader size={20} className=" animate-spin mr-2 inline-block"/> Processing...
+                </> : "Next"}
               </button>
             </div>
           </div>

@@ -58,8 +58,8 @@ for p in (APPLIED_FILE, ACCEPTED_FILE, REJECTED_FILE, PENDING_FILE):
 
 
 class ApplyRequest(BaseModel):
+    user_id: str
     name: str = Field(..., example="Alice Example")
-    email: EmailStr
     phone: Optional[str] = None
     job_id: str
     resume: str = Field(..., example="Base64 or text of resume")
@@ -93,7 +93,7 @@ def job_exists(job_id: str, jobs_file: str = "./jobs.json") -> bool:
         return False
 
 
-def already_applied(applied_file: str, job_id: str, email: str) -> bool:
+def already_applied(applied_file: str, job_id: str, user_id: str) -> bool:
     if not os.path.exists(applied_file):
         return False
 
@@ -104,7 +104,7 @@ def already_applied(applied_file: str, job_id: str, email: str) -> bool:
             return False
 
     return any(
-        job.get("job_id") == job_id and job.get("email") == email
+        job.get("job_id") == job_id and job.get("user_id") == user_id
         for job in applied_jobs
     )
 
@@ -154,8 +154,8 @@ async def apply_job(payload: ApplyRequest):
     application = {
         "application_id": application_id,
         "job_id": payload.job_id,
+        "user_id": payload.user_id,
         "name": payload.name,
-        "email": str(payload.email),
         "phone": payload.phone,
         "resume": payload.resume,
         "cover_letter": payload.cover_letter,
@@ -174,7 +174,7 @@ async def apply_job(payload: ApplyRequest):
     record = {
         "application_id": application_id,
         "job_id": payload.job_id,
-        "email": str(payload.email),
+        "user_id": payload.user_id,
         "decision_at": timestamp,
         "decision": decision,
     }
@@ -194,22 +194,22 @@ async def apply_job(payload: ApplyRequest):
 
 
 @app.get("/status")
-async def application_status(email: EmailStr):
-    """Check the status of a job application for a given email."""
-    email = str(email)
+async def application_status(user_id: str):
+    """Check the status of a job application for a given user_id."""
+    user_id = str(user_id)
 
     try:
         # Filter accepted
         all_accepted = read_json(ACCEPTED_FILE)
-        accepted = [rec for rec in all_accepted if rec.get("email") == email]
+        accepted = [rec for rec in all_accepted if rec.get("user_id") == user_id]
 
         # Filter rejected
         all_rejected = read_json(REJECTED_FILE)
-        rejected = [rec for rec in all_rejected if rec.get("email") == email]
+        rejected = [rec for rec in all_rejected if rec.get("user_id") == user_id]
 
         # Filter pending
         all_pending = read_json(PENDING_FILE)
-        on_process = [rec for rec in all_pending if rec.get("email") == email]
+        on_process = [rec for rec in all_pending if rec.get("user_id") == user_id]
 
         
         return {

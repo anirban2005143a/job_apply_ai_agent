@@ -1,0 +1,27 @@
+[
+    {
+        "id": "job_low_02",
+        "title": "UI/UX Designer",
+        "company": "Canva",
+        "cities": [
+            "Sydney"
+        ],
+        "countries": [
+            "Australia"
+        ],
+        "is_remote": true,
+        "is_hybride": false,
+        "is_onsite": false,
+        "salary_offered": 110000,
+        "visa_sponsorship_offered": false,
+        "start_date": "Immediate",
+        "required_skills": [
+            "Figma",
+            "User Research",
+            "Prototyping"
+        ],
+        "description": "Leading design sprints and creating high-fidelity wireframes.",
+        "match_score": 28,
+        "match_reason": "The candidate does not meet the required skills for the UI/UX Designer role at Canva. The candidate is a full-stack developer and does not have experience in UI/UX Design, Figma, User Research, or Prototyping. The candidate also prefers to work in a hybrid or remote mode, which does not match the job description. Although the candidate is immediately available, they do not meet the technical requirements for this role. The salary offered is also higher than the candidate's minimum salary, which is a positive factor. However, these factors are outweighed by the lack of relevant skills and experience for the role."
+    }
+]

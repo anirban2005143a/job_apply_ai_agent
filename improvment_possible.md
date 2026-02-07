@@ -71,3 +71,29 @@
 * **LLM insights:** Extract data from stored job analyses (clarification, rankings, etc.)
 
 > **Best Place for Dashboard:** A new `/dashboard` route or make it the default landing page after login instead of the current `/`.
+
+---
+
+## Functional Improvements
+- **Combined Dashboard API:** Add a single `/dashboard-stats/{user_id}` endpoint that returns counts (applied, pending, clarify, rejected), recent items, and processing status in one call to reduce frontend requests.
+- **Move job storage to DB:** Replace file-backed per-user storage with a database (Mongo/Postgres) to enable safe concurrent access, queries, and indexing.
+- **Worker Concurrency Controls:** Add configurations for max concurrent LLM and API calls, backoff/retry policies, and queue limits to avoid rate limits.
+- **Robust Auth & Validation:** Apply `verify_jwt_token` middleware to private endpoints, and validate/sanitize incoming data and remote API responses.
+- **Metrics & Health:** Expose metrics (Prometheus) and a richer `/health` endpoint indicating worker counts and queue sizes.
+- **Graceful Shutdown & Persistence:** Persist in-progress job state and make workers checkpoint so they can resume after crashes or restarts.
+- **Rate Limiting & Circuit Breakers:** Add rate limits and circuit breaker patterns around external APIs and LLM calls to protect the system.
+- **Retry/Dead-letter Queue:** Implement retry logic for failed applications and a dead-letter queue for manual inspection.
+- **Batching & Caching:** Batch LLM requests where possible and cache repetitive results to lower costs and latency.
+
+## UI Improvements
+- **Notification Settings:** Add a settings UI to toggle notification types, sound on/off, and volume control per user.
+- **Processing Toggle UX:** Improve the Start/Stop control with confirmation, descriptive status, and logs/last-run timestamp.
+- **Virtualized Notification List:** Use windowing/virtualization for the notification feed to support many items with good performance.
+- **Timestamps & Local Time:** Show human-friendly timestamps (e.g., "5m ago") and time zone-aware displays on all feeds.
+- **Optimistic UI & SWR:** Use client-side caching (SWR/react-query) and optimistic updates for quick UI responsiveness when toggling processing or applying actions.
+- **Accessibility Improvements:** Add ARIA labels, keyboard navigation, and ensure color contrast and focus states are robust.
+- **Responsive & Compact Layouts:** Optimize dashboard and cards for mobile screens with collapsible sections and denser list views.
+- **Empty States & Skeletons:** Provide clear empty-state messaging and skeleton loaders for slow network operations.
+- **Quick Filters & Actions:** Make stat cards clickable to filter lists, and add quick actions (retry, view details) on recent items.
+- **User Preferences Panel:** Surface onboarding preferences on the dashboard with edit shortcuts for faster iteration.
+

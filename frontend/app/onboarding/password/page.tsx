@@ -22,6 +22,13 @@ export default function PasswordPage() {
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
 
+  function setAuthCookie(name: string, value: string, days = 7) {
+    const seconds = days * 24 * 60 * 60;
+    // Secure: only sent over HTTPS in production
+    const secure = process.env.NODE_ENV === "production" ? "Secure;" : "";
+    document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${seconds}; ${secure} SameSite=Lax;`;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = password.trim();
@@ -74,9 +81,24 @@ export default function PasswordPage() {
       }
       if (res.ok) {
         showToast("Registration successful!", 1);
-        sessionStorage.clear()
-        await new Promise((r) => setTimeout(r, 1500));
-        router.push("/");
+        sessionStorage.clear();
+        if (result.token) {
+          await new Promise((res, rej) => {
+            setTimeout(() => {
+              setAuthCookie("token", result.token, 7);
+              res(true);
+            }, 300);
+          });
+        }
+        if (result.user?._id) {
+          await new Promise((res, rej) => {
+            setTimeout(() => {
+              setAuthCookie("user_id", result.user._id, 7);
+              res(true);
+            }, 300);
+          });
+        }
+        window.location.href = "/"
       } else {
         showToast(
           result.detail ||

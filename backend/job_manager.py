@@ -452,6 +452,9 @@ class JobManager:
     def stop_user(self, user_id):
         self.users[user_id].is_active = False
 
+    def get_user_status(self , user_id):
+        return self.users[user_id].is_active
+
 
 job_manager = JobManager()
 

@@ -244,6 +244,28 @@ def stop_user(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/user/{user_id}/processing-status")
+def get_user_processing_status(user_id: str = Path(..., description="The user ID")):
+    """
+    Get the processing status (is_active) for a user from job_manager.
+    """
+    try:
+        is_active = job_manager.get_user_status(user_id)
+        return {
+            "user_id": user_id,
+            "is_active": is_active
+        }
+    except KeyError:
+        # User not in job_manager (hasn't started processing yet)
+        return {
+            "user_id": user_id,
+            "is_active": False
+        }
+    except Exception as e:
+        print(f"Error getting user processing status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/status/{user_id}")
 async def status_by_userid(user_id: str = Path(..., description="The user ID")) -> Dict[str, Any]:
     """
@@ -273,7 +295,6 @@ async def status_by_userid(user_id: str = Path(..., description="The user ID")) 
             )
             response.raise_for_status()  # raise exception if not 2xx
             status_data = response.json()
-
         return {
             "user_id": user_id,
             "email": email,
@@ -296,8 +317,33 @@ async def websocket_connection(websocket: WebSocket, user_id: str):
         while True:
             data = await websocket.receive_text()
             print("Recieve from user" , user_id , "data" , data)
+
+            # time.sleep(5)
+            # data = {
+            #     "type": "applied",
+            #     "message": "your job has been applied",
+            #     "job_id": "job_103",
+            # }
+            # await websocket_manager.send_personal_message(user_id , data)
+
+            # time.sleep(5)
+            # data = {
+            #     "type": "rejected",
+            #     "message": "your job has been rejected",
+            #     "job_id": "job_402",
+            # }
+            # await websocket_manager.send_personal_message(user_id , data)
+
+            # time.sleep(5)
+            # data = {
+            #     "type": "clarify",
+            #     "message": "your job has been clarify",
+            #     "job_id": "job_401",
+            # }
+            # await websocket_manager.send_personal_message(user_id , data)
             
-    except WebSocketDisconnect:
+    except WebSocketDisconnect as e:
+        print(e)
         websocket_manager.disconnect(user_id)
 
 

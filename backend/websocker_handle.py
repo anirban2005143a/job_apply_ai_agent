@@ -17,6 +17,7 @@ class WebSocket_Connection_Manager:
             del self.active_connections[user_id]
 
     async def send_personal_message(self, user_id: str, data: dict):
+        print("Sending data to user" , user_id)
         websocket = self.active_connections.get(user_id)
         if websocket:
             try:

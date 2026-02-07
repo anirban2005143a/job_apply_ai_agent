@@ -103,13 +103,35 @@ const DashboardPage = () => {
     }
   };
 
-  // Fetch user status and application status
+  // Fetch user status
   const fetchUserStatus = async () => {
     if (!userId) return;
 
     try {
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+      // Fetch processing status from job_manager
+      const processingStatusResponse = await fetch(
+        `${backendUrl}/user/${userId}/processing-status`,
+      );
+      if (processingStatusResponse.ok) {
+        const processingData = await processingStatusResponse.json();
+        setIsProcessing(processingData.is_active || false);
+      }
+    } catch (error) {
+      console.error("Error fetching user status:", error);
+      showToast("Failed to load user status", 0);
+    }
+  };
+
+  // Fetch application status
+  const fetchApplicationStatus = async () => {
+    if (!userId) return;
+
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+      // Fetch application status from remote API
       const statusResponse = await fetch(`${backendUrl}/status/${userId}`);
       if (statusResponse.ok) {
         const statusData = await statusResponse.json();
@@ -121,10 +143,9 @@ const DashboardPage = () => {
             status: statusData.status,
           });
         }
-        setIsProcessing(statusData.status?.is_active || false);
       }
     } catch (error) {
-      console.error("Error fetching user status:", error);
+      console.error("Error fetching application status:", error);
       showToast("Failed to load application status", 0);
     }
   };
@@ -138,7 +159,11 @@ const DashboardPage = () => {
 
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchJobStats(), fetchUserStatus()]);
+      await Promise.all([
+        fetchJobStats(),
+        fetchApplicationStatus(),
+        fetchUserStatus(),
+      ]);
       setLoading(false);
     };
 

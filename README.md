@@ -8,6 +8,7 @@ Key features
 - WebSocket live notifications to frontend (`/ws/{user_id}`).
 - Frontend built with Next.js (app router) and Tailwind CSS.
 - Simple file-backed per-user job queues stored in user folders (e.g. `./<user_id>/pending_jobs.json`).
+- Local job portal server (`job_portal_server`) for safe testing and understanding the apply flow without interacting with official job boards.
 
 Repository layout (important files/folders)
 - `backend/` — FastAPI backend and job manager
@@ -19,6 +20,10 @@ Repository layout (important files/folders)
 - `frontend/` — Next.js frontend (app dir)
   - `app/` — pages and API integration
   - `components/Notification.tsx` — notification menu with sound
+- `job_portal_server/` — local job portal for development and testing
+  - `server.py` — mock job portal API endpoints for `/apply` and `/status`
+  - `jobs.json` — seed job listings for testing (add your test jobs here)
+  - `search_jobs.py` — job search utilities
 - `improvment_possible.md` — notes on improvements and roadmap
 
 Environment & Requirements
@@ -37,7 +42,16 @@ Environment & Requirements
     - `NEXT_PUBLIC_BACKEND_URL` — URL of the backend (e.g., `http://localhost:8000`)
 
 Running locally
-1. Start backend
+1. Start job portal server (local testing portal)
+
+```bash
+cd job_portal_server
+python server.py
+```
+
+This starts a mock job portal on port 5000. The backend will submit applications to this local server during testing.
+
+2. Start backend
 
 ```bash
 cd backend
@@ -74,7 +88,7 @@ or (recommended)
 uvicorn server:app --reload --host 0.0.0.0 --port 8000
 ```
 
-2. Frontend
+3. Frontend
 
 ```bash
 cd frontend
@@ -109,21 +123,24 @@ Core concepts and user flow
 
 **Flowchart**
 
-```mermaid
 flowchart TD
   A[User starts worker] --> B[Worker fetches jobs]
   B --> C{LLM: rank & classify}
-  C -->|Accept| D[job_retry_worker -> generate docs]
+  
+  C -->|Accept| K[Create Resume, Cover Letter, & Evidence Points]
+  K --> D[job_retry_worker -> generate docs]
+  
   C -->|Clarify| E[clarify_jobs.json -> frontend decision]
   C -->|Reject| F[rejected_jobs.json]
+  
   E --> G{User decision}
-  G -->|Yes| D
+  G -->|Yes| K
   G -->|No| F
+  
   D --> H[POST /apply -> job_portal_server]
   H --> I[Applied record -> applied_jobs.json]
   H --> J[WebSocket notify user]
   F --> J
-```
 
 4) Notifications
 - WebSocket route: `/ws/{user_id}` — backend sends small JSON objects for events: { type: 'applied'|'rejected'|'clarify', message: string, job_id: string }.
@@ -184,7 +201,8 @@ Implementation notes & conventions
 Development tips and troubleshooting
 - If you see corrupted JSON files in a user's folder, delete or move them; the code treats JSONDecodeError as an empty list.
 - To inspect live notifications, open browser DevTools Console and check WebSocket connection logs. Backend prints socket connect/disconnect messages.
-- To test the apply flow locally, run the included `job_portal_server` on port 5000 and set `API_BASE_URL=http://localhost:5000`.
+- **Testing your resume with jobs:** To test the system with your own resume, add relevant job listings to `job_portal_server/jobs.json`. The job format should match the schema expected by the backend (typically including title, description, company, requirements, link, etc.). When the backend starts, it will fetch and process these jobs.
+- **Important:** The `job_portal_server` is a local mock portal used strictly for development and testing. It does NOT interact with any official job boards or APIs. This allows you to safely test the entire workflow, understand how the system works, and validate your resume and cover letter generation without affecting real job applications.
 
 Suggested next steps (from improvment_possible.md)
 - Move per-user job storage to a DB for production safety (Mongo/Postgres).

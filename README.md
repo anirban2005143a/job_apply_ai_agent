@@ -40,8 +40,10 @@ Environment & Requirements
   - Node 18+ recommended
   - Install: `cd frontend && npm install`
   - Run: `npm run dev` (Next.js dev server)
-  - Important env vars (in frontend `.env.local`):
-    - `NEXT_PUBLIC_BACKEND_URL` — URL of the backend (e.g., `http://localhost:8000`)
+  - Important env vars (add to `.env` in `frontend/`):
+    - `NEXT_PUBLIC_BACKEND_URL` — URL of the backend (e.g., `http://127.0.0.1:8000`)
+    - `NEXT_PUBLIC_APP_URL` — Frontend application URL (e.g., `http://localhost:3000`)
+    - `JWT_SECRET` — Secret key for JWT token generation
 
 Running locally
 1. Start job portal server (local testing portal)

@@ -56,6 +56,7 @@ Contents
   - `app/` — pages (dashboard, clarify-jobs, pending, applied, etc.)
   - `components/` — shared UI components (Notification, ResumeUploader, Navbar...)
 - `job_portal_server/` — simple local job portal used for testing apply/status endpoints
+- Note: `job_portal_server` is a local demo used for development and testing only — it does NOT represent official job board APIs.
 - `improvment_possible.md` — collected improvement suggestions and roadmap
 
 Quick Start (local dev)
@@ -105,6 +106,24 @@ Core concepts and user flow
 - Frontend clarify page (`/clarify-jobs`) lists these jobs; the user can Approve (yes) or Discard (no).
   - Approve (yes): frontend calls backend `POST /clarify/{user_id}/submit?job_id=...&decision=yes` — the backend uses the existing `job_retry_worker()` to submit the application (synchronously, with retries). On success the job is removed from `clarify_jobs.json` and appended to `applied_jobs.json`.
   - Discard (no): backend moves the job into `rejected_jobs.json` and removes it from `clarify_jobs.json`.
+
+**Flowchart**
+
+```mermaid
+flowchart TD
+  A[User starts worker] --> B[Worker fetches jobs]
+  B --> C{LLM: rank & classify}
+  C -->|Accept| D[job_retry_worker -> generate docs]
+  C -->|Clarify| E[clarify_jobs.json -> frontend decision]
+  C -->|Reject| F[rejected_jobs.json]
+  E --> G{User decision}
+  G -->|Yes| D
+  G -->|No| F
+  D --> H[POST /apply -> job_portal_server]
+  H --> I[Applied record -> applied_jobs.json]
+  H --> J[WebSocket notify user]
+  F --> J
+```
 
 4) Notifications
 - WebSocket route: `/ws/{user_id}` — backend sends small JSON objects for events: { type: 'applied'|'rejected'|'clarify', message: string, job_id: string }.

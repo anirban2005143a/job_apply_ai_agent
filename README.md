@@ -31,8 +31,10 @@ Environment & Requirements
   - Recommended: Python 3.10+
   - Install: `pip install -r backend/requirements.txt`
   - Important env vars (add to `.env` in `backend/`):
-    - `API_BASE_URL` — remote status/apply/search API base used by LLM & job flows
-    - `HUGGINGFACEHUB_API_TOKEN` — if using HuggingFace endpoint
+    - `API_BASE_URL` — base URL of the local job portal service (e.g., `http://localhost:5000`)
+    - `HUGGINGFACEHUB_API_TOKEN` — HuggingFace API token for LLM endpoints
+    - `HF_MODEL` — HuggingFace model name (e.g., `meta-llama/Llama-3.1-8B-Instruct`)
+    - `MONGO_URI` — MongoDB connection URI (e.g., `mongodb://localhost:27017/`)
     - `PORT` — backend server port (default 8000)
 - Frontend (Node):
   - Node 18+ recommended
@@ -55,29 +57,6 @@ This starts a mock job portal on port 5000. The backend will submit applications
 
 ```bash
 cd backend
-# Job Apply From Resume
-
-This repository implements an automated job discovery and application system that combines a Next.js frontend with a FastAPI backend and LLM-powered helpers. The system supports per-user background processing, notification delivery via WebSockets, and simple file-backed job queues for development and local usage.
-
-Contents
-- `backend/` — FastAPI app and background processing
-  - `server.py` — API endpoints and WebSocket routes
-  - `job_manager.py` — orchestrates per-user workers, job queue handling, retry/apply logic
-  - `llm_handle.py` — prompts and LLM helper functions for ranking, resume/cover letter generation
-  - `websocker_handle.py` — WebSocket manager for sending notifications to users
-  - `db/` — Mongo helper and sample notebooks
-- `frontend/` — Next.js (app router) frontend
-  - `app/` — pages (dashboard, clarify-jobs, pending, applied, etc.)
-  - `components/` — shared UI components (Notification, ResumeUploader, Navbar...)
-- `job_portal_server/` — simple local job portal used for testing apply/status endpoints
-- Note: `job_portal_server` is a local demo used for development and testing only — it does NOT represent official job board APIs.
-- `improvment_possible.md` — collected improvement suggestions and roadmap
-
-Quick Start (local dev)
-1. Backend
-
-```bash
-cd backend
 pip install -r requirements.txt
 python server.py
 ```
@@ -95,14 +74,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
-Environment variables (backend)
-- `API_BASE_URL` — base URL of the (possibly local) job portal service; used for `/apply` and `/status` requests (e.g. `http://localhost:5000`).
-- `HUGGINGFACEHUB_API_TOKEN` — optional token used by LLM helpers.
-- `PORT` — backend port (default 8000).
-
-Environment variables (frontend)
-- `NEXT_PUBLIC_BACKEND_URL` — URL of the backend (e.g. `http://localhost:8000`).
 
 Core concepts and user flow
 1) Authentication & profile
@@ -123,6 +94,7 @@ Core concepts and user flow
 
 **Flowchart**
 
+```mermaid
 flowchart TD
   A[User starts worker] --> B[Worker fetches jobs]
   B --> C{LLM: rank & classify}
@@ -141,6 +113,7 @@ flowchart TD
   H --> I[Applied record -> applied_jobs.json]
   H --> J[WebSocket notify user]
   F --> J
+```
 
 4) Notifications
 - WebSocket route: `/ws/{user_id}` — backend sends small JSON objects for events: { type: 'applied'|'rejected'|'clarify', message: string, job_id: string }.
